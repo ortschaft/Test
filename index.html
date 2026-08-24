@@ -653,6 +653,10 @@
     <script>
 const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
+function getCmTrackerUrl(id) {
+    return `https://cmtracker.fra1.cdn.digitaloceanspaces.com/DB/26/heads/p${id}.png`;
+}
+
 const DRAFT_SEQUENCE = [
     'sturm', 'mittelfeld', 'abwehr', 'torwart',
     'sturm', 'mittelfeld', 'abwehr', 'torwart',
@@ -660,8 +664,8 @@ const DRAFT_SEQUENCE = [
 ];
 
 const limits = { abwehr: 1, mittelfeld: 2, sturm: 2, torwart: 1 };
-
 let currentStepIndex = 0;
+let searchTimeout = null;
 
 let state = {
     p1: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
@@ -669,42 +673,6 @@ let state = {
     selectedPlayerPhoto: null,
     isCustomMode: false
 };
-
-// Spielerdatenbank mit cmtracker.net CDN-Links
-const playerDatabase = [
-    // STURM
-    { id: "231747", name: "Kylian Mbappé", club: "Real Madrid", pos: "ST", category: "sturm", photo: "https://cmtracker.net/img/players/231747.png" },
-    { id: "239085", name: "Erling Haaland", club: "Man City", pos: "ST", category: "sturm", photo: "https://cmtracker.net/img/players/239085.png" },
-    { id: "238794", name: "Vinícius Júnior", club: "Real Madrid", pos: "LW", category: "sturm", photo: "https://cmtracker.net/img/players/238794.png" },
-    { id: "209331", name: "Mohamed Salah", club: "Liverpool", pos: "RW", category: "sturm", photo: "https://cmtracker.net/img/players/209331.png" },
-    { id: "202126", name: "Harry Kane", club: "FC Bayern", pos: "ST", category: "sturm", photo: "https://cmtracker.net/img/players/202126.png" },
-    { id: "277827", name: "Lamine Yamal", club: "FC Barcelona", pos: "RW", category: "sturm", photo: "https://cmtracker.net/img/players/277827.png" },
-    { id: "20801",  name: "Cristiano Ronaldo", club: "Al Nassr", pos: "ST", category: "sturm", photo: "https://cmtracker.net/img/players/20801.png" },
-    { id: "190871", name: "Neymar Jr", club: "Al Hilal", pos: "LW", category: "sturm", photo: "https://cmtracker.net/img/players/190871.png" },
-
-    // MITTELFELD
-    { id: "256630", name: "Jamal Musiala", club: "FC Bayern", pos: "CAM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/256630.png" },
-    { id: "252371", name: "Jude Bellingham", club: "Real Madrid", pos: "CAM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/252371.png" },
-    { id: "256634", name: "Florian Wirtz", club: "Bayer 04", pos: "CAM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/256634.png" },
-    { id: "192985", name: "Kevin De Bruyne", club: "Man City", pos: "CM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/192985.png" },
-    { id: "231866", name: "Rodri", club: "Man City", pos: "CDM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/231866.png" },
-    { id: "251854", name: "Pedri", club: "FC Barcelona", pos: "CM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/251854.png" },
-
-    // ABWEHR
-    { id: "203376", name: "Virgil van Dijk", club: "Liverpool", pos: "CB", category: "abwehr", photo: "https://cmtracker.net/img/players/203376.png" },
-    { id: "205452", name: "Antonio Rüdiger", club: "Real Madrid", pos: "CB", category: "abwehr", photo: "https://cmtracker.net/img/players/205452.png" },
-    { id: "243715", name: "William Saliba", club: "Arsenal", pos: "CB", category: "abwehr", photo: "https://cmtracker.net/img/players/243715.png" },
-    { id: "234396", name: "Alphonso Davies", club: "FC Bayern", pos: "LB", category: "abwehr", photo: "https://cmtracker.net/img/players/234396.png" },
-    { id: "251809", name: "Jeremie Frimpong", club: "Bayer 04", pos: "RB", category: "abwehr", photo: "https://cmtracker.net/img/players/251809.png" },
-
-    // TORWART
-    { id: "167495", name: "Manuel Neuer", club: "FC Bayern", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/167495.png" },
-    { id: "192119", name: "Thibaut Courtois", club: "Real Madrid", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/192119.png" },
-    { id: "192448", name: "Marc-André ter Stegen", club: "FC Barcelona", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/192448.png" },
-    { id: "212831", name: "Alisson Becker", club: "Liverpool", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/212831.png" },
-    { id: "230621", name: "Gianluigi Donnarumma", club: "PSG", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/230621.png" },
-    { id: "210257", name: "Ederson", club: "Man City", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/210257.png" }
-];
 
 function getCurrentPhase() {
     return DRAFT_SEQUENCE[Math.min(currentStepIndex, DRAFT_SEQUENCE.length - 1)];
@@ -733,7 +701,7 @@ function toggleCustomMode() {
     const customContainer = document.getElementById('customContainer');
 
     if (state.isCustomMode) {
-        btn.innerText = "🔍 DB Suche";
+        btn.innerText = "🔍 Live-Suche";
         searchContainer.style.display = 'none';
         customContainer.style.display = 'flex';
     } else {
@@ -743,36 +711,47 @@ function toggleCustomMode() {
     }
 }
 
+// Live-Suche über alle Spieler der CMTracker / EA DB
 function onSearchInput(val) {
+    clearTimeout(searchTimeout);
     const resultsDiv = document.getElementById('searchResults');
     const query = val.toLowerCase().trim();
-    const currentPhase = getCurrentPhase();
 
-    if (!query) {
+    if (query.length < 2) {
         resultsDiv.style.display = 'none';
         return;
     }
 
-    const matches = playerDatabase.filter(p => 
-        p.category === currentPhase && 
-        (p.name.toLowerCase().includes(query) || p.club.toLowerCase().includes(query))
-    );
-
-    if (matches.length === 0) {
-        resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">Kein ${currentPhase.toUpperCase()}-Spieler in der Liste. Nutze "Custom / ID".</div>`;
-    } else {
-        resultsDiv.innerHTML = matches.map(p => `
-            <div class="search-item" onclick="selectSearchPlayer('${p.name.replace(/'/g, "\\'")}', '${p.photo}')">
-                <img src="${p.photo}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
-                <div class="search-item-info">
-                    <span class="search-item-name">${p.name}</span>
-                    <span class="search-item-sub">${p.pos} • ${p.club}</span>
-                </div>
-            </div>
-        `).join('');
-    }
-
+    resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">⏳ Durchsuche cmtracker.net...</div>`;
     resultsDiv.style.display = 'block';
+
+    // Debounce, um nicht bei jedem Buchstaben eine Anfrage zu schicken
+    searchTimeout = setTimeout(async () => {
+        try {
+            const res = await fetch(`https://search.futbin.com/25/search?query=${encodeURIComponent(query)}`);
+            const data = await res.json();
+
+            if (!data || data.length === 0) {
+                resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">Kein Spieler gefunden.</div>`;
+                return;
+            }
+
+            resultsDiv.innerHTML = data.slice(0, 10).map(p => {
+                const photo = getCmTrackerUrl(p.id);
+                return `
+                    <div class="search-item" onclick="selectSearchPlayer('${p.name.replace(/'/g, "\\'")}', '${photo}')">
+                        <img src="${photo}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
+                        <div class="search-item-info">
+                            <span class="search-item-name">${p.name}</span>
+                            <span class="search-item-sub">${p.rating || ''} ${p.position || ''} • ID: ${p.id}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (err) {
+            resultsDiv.innerHTML = `<div class="search-item" style="color: #f87171;">Fehler bei der Live-Suche. Nutze "Custom / ID".</div>`;
+        }
+    }, 300);
 }
 
 function selectSearchPlayer(name, photo) {
@@ -781,27 +760,19 @@ function selectSearchPlayer(name, photo) {
     document.getElementById('searchResults').style.display = 'none';
 }
 
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('#searchContainer')) {
-        document.getElementById('searchResults').style.display = 'none';
-    }
-});
-
 function assignPlayer(playerNum) {
     let name = "";
     let photo = DEFAULT_AVATAR;
 
     if (state.isCustomMode) {
         name = document.getElementById('customPlayerName').value.trim();
-        const inputImg = document.getElementById('customPlayerImg').value.trim();
+        const inputVal = document.getElementById('customPlayerImg').value.trim();
+        const cleanId = inputVal.replace(/^p/, '');
         
-        // Wenn eine pure ID eingegeben wird, cmtracker.net URL generieren
-        if (/^\d+$/.test(inputImg)) {
-            photo = `https://cmtracker.net/img/players/${inputImg}.png`;
-        } else if (inputImg) {
-            photo = inputImg;
-        } else {
-            photo = DEFAULT_AVATAR;
+        if (/^\d+$/.test(cleanId)) {
+            photo = getCmTrackerUrl(cleanId);
+        } else if (inputVal) {
+            photo = inputVal;
         }
     } else {
         name = document.getElementById('playerName').value.trim();
