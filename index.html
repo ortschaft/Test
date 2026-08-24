@@ -289,14 +289,37 @@
 
         .team-title { font-size: 1.05rem; font-weight: bold; }
 
+        /* Dynamic Budget Styling */
         .budget-tag {
             font-size: 1.15rem;
             font-weight: 800;
-            color: #facc15;
-            background: rgba(250, 204, 21, 0.1);
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
-            border: 1px solid rgba(250, 204, 21, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .budget-green {
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.15);
+            border: 1px solid rgba(74, 222, 128, 0.4);
+        }
+
+        .budget-yellow {
+            color: #facc15;
+            background: rgba(250, 204, 21, 0.15);
+            border: 1px solid rgba(250, 204, 21, 0.4);
+        }
+
+        .budget-red {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            animation: pulse-red 1.5s infinite alternate;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0px rgba(248, 113, 113, 0); }
+            100% { box-shadow: 0 0 10px rgba(248, 113, 113, 0.5); }
         }
 
         /* Spielfeld Design */
@@ -500,33 +523,29 @@
         <div class="team-column team-1">
             <div class="team-header">
                 <div class="team-title">🟢 Spieler 1 Squad</div>
-                <div class="budget-tag" id="p1Budget">25 €</div>
+                <div class="budget-tag budget-green" id="p1Budget">25 €</div>
             </div>
             
             <div class="pitch">
                 <div class="pitch-center-circle"></div>
                 
-                <!-- Sturm (Top) -->
                 <div class="pitch-zone">
                     <span class="zone-title">Sturm</span>
                     <div class="card-slot" id="p1-sturm-1"><span class="empty-label">ST 1</span></div>
                     <div class="card-slot" id="p1-sturm-2"><span class="empty-label">ST 2</span></div>
                 </div>
 
-                <!-- Mittelfeld (Middle) -->
                 <div class="pitch-zone">
                     <span class="zone-title">Mittelfeld</span>
                     <div class="card-slot" id="p1-mittelfeld-1"><span class="empty-label">MF 1</span></div>
                     <div class="card-slot" id="p1-mittelfeld-2"><span class="empty-label">MF 2</span></div>
                 </div>
 
-                <!-- Abwehr -->
                 <div class="pitch-zone">
                     <span class="zone-title">Abwehr</span>
                     <div class="card-slot" id="p1-abwehr-1"><span class="empty-label">ABW 1</span></div>
                 </div>
 
-                <!-- Torwart (Bottom) -->
                 <div class="pitch-zone">
                     <span class="zone-title">Torwart</span>
                     <div class="card-slot" id="p1-torwart-1"><span class="empty-label">TW</span></div>
@@ -590,7 +609,7 @@
         <div class="team-column team-2">
             <div class="team-header">
                 <div class="team-title">🔵 Spieler 2 Squad</div>
-                <div class="budget-tag" id="p2Budget">25 €</div>
+                <div class="budget-tag budget-green" id="p2Budget">25 €</div>
             </div>
             
             <div class="pitch">
@@ -632,18 +651,14 @@
     </div>
 
     <script>
-        // Lokales SVG Avatar Icon als absoluter Fallback
         const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
-        // Exakte 12-Schritte Reihenfolge aus deiner Vorgabe:
-        // Sturm -> Mittelfeld -> Abwehr -> Torwart -> Sturm -> Mittelfeld -> Abwehr -> Torwart -> Sturm -> Mittelfeld -> Sturm -> Mittelfeld
         const DRAFT_SEQUENCE = [
             'sturm', 'mittelfeld', 'abwehr', 'torwart',
             'sturm', 'mittelfeld', 'abwehr', 'torwart',
             'sturm', 'mittelfeld', 'sturm', 'mittelfeld'
         ];
 
-        // Maximale Plätze pro Team
         const limits = { abwehr: 1, mittelfeld: 2, sturm: 2, torwart: 1 };
 
         let currentStepIndex = 0;
@@ -655,44 +670,60 @@
             isCustomMode: false
         };
 
-        // Datenbank kategorisiert nach Positionen für exakte Filterung
+        // SoFIFA CDN Spielerbilder (Zuverlässige Links)
         const playerDatabase = [
             // STURM
-            { name: "Kylian Mbappé", club: "Real Madrid", pos: "ST", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/231747.png" },
-            { name: "Erling Haaland", club: "Man City", pos: "ST", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/239085.png" },
-            { name: "Vinícius Júnior", club: "Real Madrid", pos: "LW", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/238794.png" },
-            { name: "Mohamed Salah", club: "Liverpool", pos: "RW", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/209331.png" },
-            { name: "Harry Kane", club: "FC Bayern", pos: "ST", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/202126.png" },
-            { name: "Lamine Yamal", club: "FC Barcelona", pos: "RW", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/277827.png" },
-            { name: "Neymar Jr", club: "Al Hilal", pos: "LW", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/190871.png" },
-            { name: "Cristiano Ronaldo", club: "Al Nassr", pos: "ST", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/20801.png" },
+            { name: "Kylian Mbappé", club: "Real Madrid", pos: "ST", category: "sturm", photo: "https://cdn.sofifa.net/players/231/747/24_120.png" },
+            { name: "Erling Haaland", club: "Man City", pos: "ST", category: "sturm", photo: "https://cdn.sofifa.net/players/239/085/24_120.png" },
+            { name: "Vinícius Júnior", club: "Real Madrid", pos: "LW", category: "sturm", photo: "https://cdn.sofifa.net/players/238/794/24_120.png" },
+            { name: "Mohamed Salah", club: "Liverpool", pos: "RW", category: "sturm", photo: "https://cdn.sofifa.net/players/209/331/24_120.png" },
+            { name: "Harry Kane", club: "FC Bayern", pos: "ST", category: "sturm", photo: "https://cdn.sofifa.net/players/202/126/24_120.png" },
+            { name: "Lamine Yamal", club: "FC Barcelona", pos: "RW", category: "sturm", photo: "https://cdn.sofifa.net/players/277/827/24_120.png" },
+            { name: "Neymar Jr", club: "Al Hilal", pos: "LW", category: "sturm", photo: "https://cdn.sofifa.net/players/190/871/24_120.png" },
+            { name: "Cristiano Ronaldo", club: "Al Nassr", pos: "ST", category: "sturm", photo: "https://cdn.sofifa.net/players/020/801/24_120.png" },
 
             // MITTELFELD
-            { name: "Jamal Musiala", club: "FC Bayern", pos: "CAM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/256630.png" },
-            { name: "Jude Bellingham", club: "Real Madrid", pos: "CAM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/252371.png" },
-            { name: "Florian Wirtz", club: "Bayer 04", pos: "CAM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/256634.png" },
-            { name: "Kevin De Bruyne", club: "Man City", pos: "CM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/192985.png" },
-            { name: "Rodri", club: "Man City", pos: "CDM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/231866.png" },
-            { name: "Pedri", club: "FC Barcelona", pos: "CM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/251854.png" },
+            { name: "Jamal Musiala", club: "FC Bayern", pos: "CAM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/256/630/24_120.png" },
+            { name: "Jude Bellingham", club: "Real Madrid", pos: "CAM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/252/371/24_120.png" },
+            { name: "Florian Wirtz", club: "Bayer 04", pos: "CAM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/256/634/24_120.png" },
+            { name: "Kevin De Bruyne", club: "Man City", pos: "CM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/192/985/24_120.png" },
+            { name: "Rodri", club: "Man City", pos: "CDM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/231/866/24_120.png" },
+            { name: "Pedri", club: "FC Barcelona", pos: "CM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/251/854/24_120.png" },
 
             // ABWEHR
-            { name: "Virgil van Dijk", club: "Liverpool", pos: "CB", category: "abwehr", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/203376.png" },
-            { name: "Antonio Rüdiger", club: "Real Madrid", pos: "CB", category: "abwehr", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/205452.png" },
-            { name: "William Saliba", club: "Arsenal", pos: "CB", category: "abwehr", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/243715.png" },
-            { name: "Alphonso Davies", club: "FC Bayern", pos: "LB", category: "abwehr", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/234396.png" },
-            { name: "Jeremie Frimpong", club: "Bayer 04", pos: "RB", category: "abwehr", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/251809.png" },
+            { name: "Virgil van Dijk", club: "Liverpool", pos: "CB", category: "abwehr", photo: "https://cdn.sofifa.net/players/203/376/24_120.png" },
+            { name: "Antonio Rüdiger", club: "Real Madrid", pos: "CB", category: "abwehr", photo: "https://cdn.sofifa.net/players/205/452/24_120.png" },
+            { name: "William Saliba", club: "Arsenal", pos: "CB", category: "abwehr", photo: "https://cdn.sofifa.net/players/243/715/24_120.png" },
+            { name: "Alphonso Davies", club: "FC Bayern", pos: "LB", category: "abwehr", photo: "https://cdn.sofifa.net/players/234/396/24_120.png" },
+            { name: "Jeremie Frimpong", club: "Bayer 04", pos: "RB", category: "abwehr", photo: "https://cdn.sofifa.net/players/251/809/24_120.png" },
 
             // TORWART
-            { name: "Manuel Neuer", club: "FC Bayern", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/167495.png" },
-            { name: "Thibaut Courtois", club: "Real Madrid", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/192119.png" },
-            { name: "Marc-André ter Stegen", club: "FC Barcelona", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/192448.png" },
-            { name: "Alisson Becker", club: "Liverpool", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/212831.png" },
-            { name: "Gianluigi Donnarumma", club: "PSG", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/230621.png" },
-            { name: "Ederson", club: "Man City", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/210257.png" }
+            { name: "Manuel Neuer", club: "FC Bayern", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/167/495/24_120.png" },
+            { name: "Thibaut Courtois", club: "Real Madrid", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/192/119/24_120.png" },
+            { name: "Marc-André ter Stegen", club: "FC Barcelona", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/192/448/24_120.png" },
+            { name: "Alisson Becker", club: "Liverpool", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/212/831/24_120.png" },
+            { name: "Gianluigi Donnarumma", club: "PSG", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/230/621/24_120.png" },
+            { name: "Ederson", club: "Man City", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/210/257/24_120.png" }
         ];
 
         function getCurrentPhase() {
             return DRAFT_SEQUENCE[Math.min(currentStepIndex, DRAFT_SEQUENCE.length - 1)];
+        }
+
+        function updateBudgetDisplay(playerNum) {
+            const budget = state[`p${playerNum}`].budget;
+            const el = document.getElementById(`p${playerNum}Budget`);
+            el.innerText = `${budget} €`;
+
+            el.classList.remove('budget-green', 'budget-yellow', 'budget-red');
+
+            if (budget > 15) {
+                el.classList.add('budget-green');
+            } else if (budget >= 6) {
+                el.classList.add('budget-yellow');
+            } else {
+                el.classList.add('budget-red');
+            }
         }
 
         function toggleCustomMode() {
@@ -722,7 +753,6 @@
                 return;
             }
 
-            // FILTER: Zeige NUR Spieler der AKTUELLEN Position
             const matches = playerDatabase.filter(p => 
                 p.category === currentPhase && 
                 (p.name.toLowerCase().includes(query) || p.club.toLowerCase().includes(query))
@@ -759,16 +789,12 @@
 
         function updateUIPhase() {
             const currentPhase = getCurrentPhase();
-
-            // Sequence Bar update
             const totalSteps = DRAFT_SEQUENCE.length;
             const stepNum = Math.min(currentStepIndex + 1, totalSteps);
-            document.getElementById('sequenceBadge').innerText = `Runde ${stepNum}/${totalSteps}: ${currentPhase.toUpperCase()}`;
 
-            // Filter Hinweis update
+            document.getElementById('sequenceBadge').innerText = `Runde ${stepNum}/${totalSteps}: ${currentPhase.toUpperCase()}`;
             document.getElementById('filterHint').innerText = `🔍 Filter aktiv: Nur ${currentPhase.toUpperCase()}-Spieler`;
 
-            // Position Grid Button Highlight
             document.querySelectorAll('.pos-btn').forEach(btn => {
                 const pos = btn.id.replace('pos-', '');
                 btn.classList.toggle('active', pos === currentPhase);
@@ -843,16 +869,16 @@
                 `;
             }
 
-            document.getElementById(`p${playerNum}Budget`).innerText = `${playerState.budget} €`;
+            // Budget-Anzeige und Farbe aktualisieren
+            updateBudgetDisplay(playerNum);
 
-            // Reset Inputs
+            // Inputs zurücksetzen
             document.getElementById('playerName').value = '';
             document.getElementById('customPlayerName').value = '';
             document.getElementById('customPlayerImg').value = '';
             priceInput.value = '';
             state.selectedPlayerPhoto = null;
 
-            // Nächster Schritt in der festen Sequenz
             currentStepIndex++;
 
             if (currentStepIndex >= DRAFT_SEQUENCE.length) {
