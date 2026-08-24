@@ -134,82 +134,6 @@
             border-color: #38bdf8;
         }
 
-        .filter-hint {
-            font-size: 0.75rem;
-            color: #38bdf8;
-            font-weight: 600;
-        }
-
-        .btn-toggle-custom {
-            background: #334155;
-            color: #38bdf8;
-            border: 1px solid #475569;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-toggle-custom:hover {
-            background: #475569;
-        }
-
-        .search-results-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: #0f172a;
-            border: 1px solid #38bdf8;
-            border-radius: 8px;
-            max-height: 230px;
-            overflow-y: auto;
-            z-index: 50;
-            display: none;
-            margin-top: 4px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-        }
-
-        .search-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #1e293b;
-            transition: background 0.2s;
-        }
-
-        .search-item:hover {
-            background: #1e293b;
-        }
-
-        .search-item img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #334155;
-            border: 1px solid #475569;
-        }
-
-        .search-item-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .search-item-name {
-            font-weight: bold;
-            font-size: 0.85rem;
-            color: #f8fafc;
-        }
-
-        .search-item-sub {
-            font-size: 0.75rem;
-            color: #94a3b8;
-        }
-
         .pos-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -243,7 +167,7 @@
             margin-top: 5px;
         }
 
-        .btn-p1, .btn-p2 {
+        .btn-p1, .btn-p2, .btn-invite {
             color: white;
             border: none;
             padding: 11px;
@@ -255,17 +179,11 @@
 
         .btn-p1 { background: linear-gradient(135deg, #16a34a, #15803d); }
         .btn-p2 { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .btn-invite { background: linear-gradient(135deg, #0ea5e9, #0284c7); padding: 8px; font-size: 0.85rem; }
 
-        .btn-p1:hover, .btn-p2:hover {
+        .btn-p1:hover, .btn-p2:hover, .btn-invite:hover {
             opacity: 0.9;
             transform: translateY(-2px);
-        }
-
-        .btn-p1:disabled, .btn-p2:disabled {
-            background: #475569;
-            cursor: not-allowed;
-            opacity: 0.4;
-            transform: none;
         }
 
         .team-column {
@@ -289,7 +207,6 @@
 
         .team-title { font-size: 1.05rem; font-weight: bold; }
 
-        /* Dynamic Budget Styling */
         .budget-tag {
             font-size: 1.15rem;
             font-weight: 800;
@@ -298,31 +215,15 @@
             transition: all 0.3s ease;
         }
 
-        .budget-green {
-            color: #4ade80;
-            background: rgba(74, 222, 128, 0.15);
-            border: 1px solid rgba(74, 222, 128, 0.4);
-        }
-
-        .budget-yellow {
-            color: #facc15;
-            background: rgba(250, 204, 21, 0.15);
-            border: 1px solid rgba(250, 204, 21, 0.4);
-        }
-
-        .budget-red {
-            color: #f87171;
-            background: rgba(248, 113, 113, 0.15);
-            border: 1px solid rgba(248, 113, 113, 0.4);
-            animation: pulse-red 1.5s infinite alternate;
-        }
+        .budget-green { color: #4ade80; background: rgba(74, 222, 128, 0.15); border: 1px solid rgba(74, 222, 128, 0.4); }
+        .budget-yellow { color: #facc15; background: rgba(250, 204, 21, 0.15); border: 1px solid rgba(250, 204, 21, 0.4); }
+        .budget-red { color: #f87171; background: rgba(248, 113, 113, 0.15); border: 1px solid rgba(248, 113, 113, 0.4); animation: pulse-red 1.5s infinite alternate; }
 
         @keyframes pulse-red {
             0% { box-shadow: 0 0 0px rgba(248, 113, 113, 0); }
             100% { box-shadow: 0 0 10px rgba(248, 113, 113, 0.5); }
         }
 
-        /* Spielfeld Design */
         .pitch {
             background: #2e7d32;
             background-image: 
@@ -467,42 +368,16 @@
             z-index: 100;
         }
 
-        .winner-modal {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.95);
+        #viewerScreen {
             display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 200;
-        }
-
-        .winner-content {
             background: #1e293b;
-            border: 3px solid #facc15;
-            padding: 30px;
-            border-radius: 20px;
+            border: 2px solid #38bdf8;
+            border-radius: 16px;
+            padding: 30px 18px;
             text-align: center;
-            max-width: 450px;
-            box-shadow: 0 0 30px rgba(250, 204, 21, 0.3);
-        }
-
-        .winner-content h2 {
-            color: #facc15;
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .reset-btn {
-            background: #facc15;
-            color: #0f172a;
-            border: none;
-            padding: 12px 24px;
-            font-weight: bold;
-            font-size: 1rem;
-            border-radius: 8px;
-            margin-top: 20px;
-            cursor: pointer;
+            color: #38bdf8;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            height: fit-content;
         }
     </style>
 </head>
@@ -510,7 +385,7 @@
 
     <header>
         <h1>Squad Builder</h1>
-        <p>2 Manager (je 25 €) | Exakte Auktions-Reihenfolge mit Torwart</p>
+        <p>2 Manager (je 25 €) | Exakte Auktions-Reihenfolge</p>
     </header>
 
     <div class="sequence-bar">
@@ -554,33 +429,31 @@
         </div>
 
         <!-- Spielleiter Panel -->
-        <div class="admin-panel">
+        <div class="admin-panel" id="adminPanel">
             <h2>
                 <span>🎮 Spielleiter</span>
-                <span class="badge-admin">Person 3</span>
+                <span class="badge-admin">Moderator</span>
             </h2>
 
-            <div class="form-group">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                    <label for="playerName">Fußballspieler:</label>
-                    <button type="button" class="btn-toggle-custom" id="toggleCustomBtn" onclick="toggleCustomMode()">
-                        ✏️ Custom Spieler
-                    </button>
-                </div>
-                <div class="filter-hint" id="filterHint">🔍 Filter aktiv: Nur STURM-Spieler</div>
-
-                <div id="searchContainer" style="position: relative; margin-top: 4px;">
-                    <input type="text" id="playerName" placeholder="Spieler suchen..." autocomplete="off" oninput="onSearchInput(this.value)">
-                    <div id="searchResults" class="search-results-dropdown"></div>
-                </div>
-
-                <div id="customContainer" style="display: none; flex-direction: column; gap: 6px; margin-top: 4px;">
-                    <input type="text" id="customPlayerName" placeholder="Name manuell eingeben...">
-                    <input type="text" id="customPlayerImg" placeholder="Bild-URL (optional)...">
-                </div>
+            <!-- Einladungslinks generieren -->
+            <button onclick="generateInviteLinks()" class="btn-invite">🔗 Einladungslinks für Spieler erstellen</button>
+            
+            <div id="inviteLinks" style="display: none; flex-direction: column; gap: 5px; margin-bottom: 10px; margin-top: 5px;">
+                <label style="font-size: 0.75rem;">Link für Spieler 1:</label>
+                <input type="text" id="linkP1" readonly onclick="this.select()" style="padding: 6px; font-size: 0.8rem;">
+                
+                <label style="font-size: 0.75rem; margin-top: 5px;">Link für Spieler 2:</label>
+                <input type="text" id="linkP2" readonly onclick="this.select()" style="padding: 6px; font-size: 0.8rem;">
             </div>
 
+            <hr style="border-color: #334155; margin: 5px 0 10px 0;">
+
             <div class="form-group">
+                <label for="playerName">Fußballspieler eingeben:</label>
+                <input type="text" id="playerName" placeholder="z.B. Kylian Mbappé" autocomplete="off">
+            </div>
+
+            <div class="form-group" style="margin-top: 10px;">
                 <label>Aktuelle Position:</label>
                 <div class="pos-grid">
                     <div class="pos-btn" id="pos-sturm">⚡ Sturm</div>
@@ -590,12 +463,12 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-top: 10px;">
                 <label for="playerPrice">Preis / Gebot (€):</label>
-                <input type="number" id="playerPrice" min="0" max="25" placeholder="0 oder höher (z.B. 0, 4, 7)">
+                <input type="number" id="playerPrice" min="0" max="25" placeholder="0 oder höher (z.B. 4)">
             </div>
 
-            <div class="action-buttons">
+            <div class="action-buttons" style="margin-top: 15px;">
                 <button class="btn-p1" id="btnAssignP1" onclick="assignPlayer(1)">
                     An Spieler 1 verkaufen
                 </button>
@@ -603,6 +476,12 @@
                     An Spieler 2 verkaufen
                 </button>
             </div>
+        </div>
+
+        <!-- Wird statt dem Admin Panel angezeigt, wenn man über den Share-Link reinkommt -->
+        <div id="viewerScreen">
+            <h2 style="margin-bottom: 10px;">👀 Zuschauer-Modus</h2>
+            <p style="color: #cbd5e1; font-size: 0.9rem;">Warte darauf, dass der Moderator die Spieler zuteilt. Das Spielfeld aktualisiert sich entsprechend der Eingaben.</p>
         </div>
 
         <!-- Spieler 2 -->
@@ -642,209 +521,152 @@
 
     <div class="toast" id="toast"></div>
 
-    <div class="winner-modal" id="winnerModal">
-        <div class="winner-content">
-            <h2>🎉 Auktionsrunde Beendet!</h2>
-            <p id="winnerText" style="color: #cbd5e1; margin-bottom: 15px;"></p>
-            <button class="reset-btn" onclick="resetGame()">Neues Spiel starten</button>
-        </div>
-    </div>
-
     <script>
-const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+        const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
-function getCmTrackerUrl(id) {
-    return `https://cmtracker.fra1.cdn.digitaloceanspaces.com/DB/26/heads/p${id}.png`;
-}
+        const DRAFT_SEQUENCE = [
+            'sturm', 'mittelfeld', 'abwehr', 'torwart',
+            'sturm', 'mittelfeld', 'abwehr', 'torwart',
+            'sturm', 'mittelfeld', 'sturm', 'mittelfeld'
+        ];
 
-const DRAFT_SEQUENCE = [
-    'sturm', 'mittelfeld', 'abwehr', 'torwart',
-    'sturm', 'mittelfeld', 'abwehr', 'torwart',
-    'sturm', 'mittelfeld', 'sturm', 'mittelfeld'
-];
+        const limits = { abwehr: 1, mittelfeld: 2, sturm: 2, torwart: 1 };
+        let currentStepIndex = 0;
 
-const limits = { abwehr: 1, mittelfeld: 2, sturm: 2, torwart: 1 };
-let currentStepIndex = 0;
-let searchTimeout = null;
+        let state = {
+            p1: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
+            p2: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } }
+        };
 
-let state = {
-    p1: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
-    p2: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
-    selectedPlayerPhoto: null,
-    isCustomMode: false
-};
+        // --- ROLE / LINK LOGIK ---
+        function checkUserRole() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get('role');
 
-function getCurrentPhase() {
-    return DRAFT_SEQUENCE[Math.min(currentStepIndex, DRAFT_SEQUENCE.length - 1)];
-}
+            if (role === 'p1' || role === 'p2') {
+                document.getElementById('adminPanel').style.display = 'none';
+                document.getElementById('viewerScreen').style.display = 'block';
+            }
+        }
+        // Direkt beim Start aufrufen
+        checkUserRole();
 
-function updateBudgetDisplay(playerNum) {
-    const budget = state[`p${playerNum}`].budget;
-    const el = document.getElementById(`p${playerNum}Budget`);
-    el.innerText = `${budget} €`;
-
-    el.classList.remove('budget-green', 'budget-yellow', 'budget-red');
-
-    if (budget > 15) {
-        el.classList.add('budget-green');
-    } else if (budget >= 6) {
-        el.classList.add('budget-yellow');
-    } else {
-        el.classList.add('budget-red');
-    }
-}
-
-function toggleCustomMode() {
-    state.isCustomMode = !state.isCustomMode;
-    const btn = document.getElementById('toggleCustomBtn');
-    const searchContainer = document.getElementById('searchContainer');
-    const customContainer = document.getElementById('customContainer');
-
-    if (state.isCustomMode) {
-        btn.innerText = "🔍 Suche";
-        searchContainer.style.display = 'none';
-        customContainer.style.display = 'flex';
-    } else {
-        btn.innerText = "✏️ Custom / ID";
-        searchContainer.style.display = 'block';
-        customContainer.style.display = 'none';
-    }
-}
-
-// ECHTE LIVE-SUCHE ÜBER DAS INTERNET
-function onSearchInput(val) {
-    const resultsDiv = document.getElementById('searchResults');
-    const query = val.toLowerCase().trim();
-
-    if (query.length < 2) {
-        resultsDiv.style.display = 'none';
-        return;
-    }
-
-    resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">🔍 Suche live im Internet...</div>`;
-    resultsDiv.style.display = 'block';
-
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(async () => {
-        try {
-            // Holt Live-Ergebnisse über einen CORS-Proxy
-            const res = await fetch(`https://corsproxy.io/?https://www.futbin.com/search?year=25&term=${encodeURIComponent(query)}`);
+        function generateInviteLinks() {
+            const baseUrl = window.location.href.split('?')[0]; // URL ohne Parameter
             
-            if (!res.ok) throw new Error("Netzwerkfehler");
+            document.getElementById('linkP1').value = `${baseUrl}?role=p1`;
+            document.getElementById('linkP2').value = `${baseUrl}?role=p2`;
+            
+            document.getElementById('inviteLinks').style.display = 'flex';
+        }
 
-            const data = await res.json();
+        // --- GAME LOGIK ---
+        function getCurrentPhase() {
+            return DRAFT_SEQUENCE[Math.min(currentStepIndex, DRAFT_SEQUENCE.length - 1)];
+        }
 
-            if (!Array.isArray(data) || data.length === 0) {
-                resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">Kein Spieler gefunden.</div>`;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        function updateBudgetDisplay(playerNum) {
+            const budget = state[`p${playerNum}`].budget;
+            const el = document.getElementById(`p${playerNum}Budget`);
+            el.innerText = `${budget} €`;
+
+            el.classList.remove('budget-green', 'budget-yellow', 'budget-red');
+
+            if (budget > 15) {
+                el.classList.add('budget-green');
+            } else if (budget >= 6) {
+                el.classList.add('budget-yellow');
+            } else {
+                el.classList.add('budget-red');
+            }
+        }
+
+        function updateUIPhase() {
+            const pos = getCurrentPhase();
+            document.getElementById('sequenceBadge').innerText = `Runde ${currentStepIndex + 1}/${DRAFT_SEQUENCE.length}: ${pos.toUpperCase()}`;
+            
+            document.querySelectorAll('.pos-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`pos-${pos}`);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+        // UI für Runde 1 initialisieren
+        updateUIPhase();
+
+        function assignPlayer(playerNum) {
+            const nameInput = document.getElementById('playerName');
+            const priceInput = document.getElementById('playerPrice');
+            
+            const name = nameInput.value.trim();
+            const price = parseInt(priceInput.value);
+            const pos = getCurrentPhase();
+            const photo = DEFAULT_AVATAR; // Immer das Standard Icon
+
+            if (!name) {
+                showToast("⚠️ Bitte gib einen Spielernamen ein!");
                 return;
             }
 
-            resultsDiv.innerHTML = data.slice(0, 8).map(p => {
-                const photo = getCmTrackerUrl(p.id);
-                const playerName = p.name.replace(/'/g, "\\'");
-                return `
-                    <div class="search-item" onclick="selectSearchPlayer('${playerName}', '${photo}')">
-                        <img src="${photo}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
-                        <div class="search-item-info">
-                            <span class="search-item-name">${p.name}</span>
-                            <span class="search-item-sub">${p.rating || ''} OVR • ${p.version || 'Base'}</span>
-                        </div>
+            if (isNaN(price) || price < 0) {
+                showToast("⚠️ Bitte gib einen gültigen Preis ein!");
+                return;
+            }
+
+            const playerState = playerNum === 1 ? state.p1 : state.p2;
+
+            if (price > playerState.budget) {
+                showToast(`⚠️ Spieler ${playerNum} hat nicht genug Budget! (Rest: ${playerState.budget} €)`);
+                return;
+            }
+
+            if (playerState.squad[pos].length >= limits[pos]) {
+                showToast(`⚠️ Spieler ${playerNum} hat für ${pos.toUpperCase()} keinen freien Platz mehr!`);
+                return;
+            }
+
+            // Spieler abziehen und eintragen
+            playerState.budget -= price;
+            playerState.squad[pos].push({ name, price, photo });
+
+            // Auf dem Spielfeld anzeigen
+            const slotIndex = playerState.squad[pos].length;
+            const slotEl = document.getElementById(`p${playerNum}-${pos}-${slotIndex}`);
+            
+            if (slotEl) {
+                slotEl.classList.add('filled');
+                slotEl.innerHTML = `
+                    <div class="player-card">
+                        <span class="pos-tag">${pos.toUpperCase()}</span>
+                        <img class="player-face" src="${photo}" alt="${name}" loading="lazy">
+                        <span class="name" title="${name}">${name}</span>
+                        <span class="price">${price} €</span>
                     </div>
                 `;
-            }).join('');
-        } catch (err) {
-            resultsDiv.innerHTML = `<div class="search-item" style="color: #ef4444;">Live-Suche blockiert. Nutze "Custom / ID".</div>`;
+            }
+
+            updateBudgetDisplay(playerNum);
+
+            // Felder resetten
+            nameInput.value = '';
+            priceInput.value = '';
+            nameInput.focus(); // Direkt wieder für den nächsten Sprung bereit
+
+            currentStepIndex++;
+
+            if (currentStepIndex >= DRAFT_SEQUENCE.length) {
+                document.getElementById('sequenceBadge').innerText = "DRAFT BEENDET 🎉";
+                document.querySelectorAll('.pos-btn').forEach(btn => btn.classList.remove('active'));
+                showToast("✅ Der Draft ist komplett!");
+            } else {
+                updateUIPhase();
+            }
         }
-    }, 350);
-}
-
-function selectSearchPlayer(name, photo) {
-    document.getElementById('playerName').value = name;
-    state.selectedPlayerPhoto = photo;
-    document.getElementById('searchResults').style.display = 'none';
-}
-
-function assignPlayer(playerNum) {
-    let name = "";
-    let photo = DEFAULT_AVATAR;
-
-    if (state.isCustomMode) {
-        name = document.getElementById('customPlayerName').value.trim();
-        const inputVal = document.getElementById('customPlayerImg').value.trim();
-        const cleanId = inputVal.replace(/^p/, '');
-        
-        if (/^\d+$/.test(cleanId)) {
-            photo = getCmTrackerUrl(cleanId);
-        } else if (inputVal) {
-            photo = inputVal;
-        }
-    } else {
-        name = document.getElementById('playerName').value.trim();
-        if (state.selectedPlayerPhoto) {
-            photo = state.selectedPlayerPhoto;
-        }
-    }
-
-    const priceInput = document.getElementById('playerPrice');
-    const price = parseInt(priceInput.value);
-    const pos = getCurrentPhase();
-
-    if (!name) {
-        showToast("⚠️ Bitte gib einen Spielernamen ein!");
-        return;
-    }
-
-    if (isNaN(price) || price < 0) {
-        showToast("⚠️ Bitte gib einen gültigen Preis ein!");
-        return;
-    }
-
-    const playerState = playerNum === 1 ? state.p1 : state.p2;
-
-    if (price > playerState.budget) {
-        showToast(`⚠️ Spieler ${playerNum} hat nicht genug Budget! (Rest: ${playerState.budget} €)`);
-        return;
-    }
-
-    if (playerState.squad[pos].length >= limits[pos]) {
-        showToast(`⚠️ Spieler ${playerNum} hat für ${pos.toUpperCase()} keinen freien Platz mehr!`);
-        return;
-    }
-
-    playerState.budget -= price;
-    playerState.squad[pos].push({ name, price, photo });
-
-    const slotIndex = playerState.squad[pos].length;
-    const slotEl = document.getElementById(`p${playerNum}-${pos}-${slotIndex}`);
-    
-    if (slotEl) {
-        slotEl.classList.add('filled');
-        slotEl.innerHTML = `
-            <div class="player-card">
-                <span class="pos-tag">${pos.toUpperCase()}</span>
-                <img class="player-face" src="${photo}" alt="${name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
-                <span class="name" title="${name}">${name}</span>
-                <span class="price">${price} €</span>
-            </div>
-        `;
-    }
-
-    updateBudgetDisplay(playerNum);
-
-    document.getElementById('playerName').value = '';
-    document.getElementById('customPlayerName').value = '';
-    document.getElementById('customPlayerImg').value = '';
-    priceInput.value = '';
-    state.selectedPlayerPhoto = null;
-
-    currentStepIndex++;
-
-    if (currentStepIndex >= DRAFT_SEQUENCE.length) {
-        checkCompletion(true);
-    } else {
-        updateUIPhase();
-    }
-}
     </script>
 </body>
 </html>
