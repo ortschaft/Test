@@ -651,6 +651,67 @@
     </div>
 
     <script>
+const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+
+function getCmTrackerUrl(id) {
+    return `https://cmtracker.fra1.cdn.digitaloceanspaces.com/DB/26/heads/p${id}.png`;
+}
+
+const DRAFT_SEQUENCE = [
+    'sturm', 'mittelfeld', 'abwehr', 'torwart',
+    'sturm', 'mittelfeld', 'abwehr', 'torwart',
+    'sturm', 'mittelfeld', 'sturm', 'mittelfeld'
+];
+
+const limits = { abwehr: 1, mittelfeld: 2, sturm: 2, torwart: 1 };
+let currentStepIndex = 0;
+let searchTimeout = null;
+
+let state = {
+    p1: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
+    p2: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
+    selectedPlayerPhoto: null,
+    isCustomMode: false
+};
+
+function getCurrentPhase() {
+    return DRAFT_SEQUENCE[Math.min(currentStepIndex, DRAFT_SEQUENCE.length - 1)];
+}
+
+function updateBudgetDisplay(playerNum) {
+    const budget = state[`p${playerNum}`].budget;
+    const el = document.getElementById(`p${playerNum}Budget`);
+    el.innerText = `${budget} €`;
+
+    el.classList.remove('budget-green', 'budget-yellow', 'budget-red');
+
+    if (budget > 15) {
+        el.classList.add('budget-green');
+    } else if (budget >= 6) {
+        el.classList.add('budget-yellow');
+    } else {
+        el.classList.add('budget-red');
+    }
+}
+
+function toggleCustomMode() {
+    state.isCustomMode = !state.isCustomMode;
+    const btn = document.getElementById('toggleCustomBtn');
+    const searchContainer = document.getElementById('searchContainer');
+    const customContainer = document.getElementById('customContainer');
+
+    if (state.isCustomMode) {
+        btn.innerText = "🔍 Live-Suche";
+        searchContainer.style.display = 'none';
+        customContainer.style.display = 'flex';
+    } else {
+        btn.innerText = "✏️ Custom / ID";
+        searchContainer.style.display = 'block';
+        customContainer.style.display = 'none';
+    }
+}
+
+// Live-Suche über CORS-Proxy (behebt den Browser-Fehler)
 function onSearchInput(val) {
     clearTimeout(searchTimeout);
     const resultsDiv = document.getElementById('searchResults');
@@ -661,12 +722,11 @@ function onSearchInput(val) {
         return;
     }
 
-    resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">⏳ Durchsuche CMTracker...</div>`;
+    resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">⏳ Durchsuche cmtracker.net...</div>`;
     resultsDiv.style.display = 'block';
 
     searchTimeout = setTimeout(async () => {
         try {
-            // Die Ziel-URL wird über den CORS-Proxy umgeleitet
             const targetUrl = `https://search.futbin.com/25/search?query=${encodeURIComponent(query)}`;
             const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
             
@@ -691,9 +751,97 @@ function onSearchInput(val) {
                 `;
             }).join('');
         } catch (err) {
-            resultsDiv.innerHTML = `<div class="search-item" style="color: #f87171;">Fehler bei der Live-Suche.</div>`;
+            resultsDiv.innerHTML = `<div class="search-item" style="color: #f87171;">Fehler bei der Live-Suche. Nutze "Custom / ID".</div>`;
         }
     }, 300);
+}
+
+function selectSearchPlayer(name, photo) {
+    document.getElementById('playerName').value = name;
+    state.selectedPlayerPhoto = photo;
+    document.getElementById('searchResults').style.display = 'none';
+}
+
+function assignPlayer(playerNum) {
+    let name = "";
+    let photo = DEFAULT_AVATAR;
+
+    if (state.isCustomMode) {
+        name = document.getElementById('customPlayerName').value.trim();
+        const inputVal = document.getElementById('customPlayerImg').value.trim();
+        const cleanId = inputVal.replace(/^p/, '');
+        
+        if (/^\d+$/.test(cleanId)) {
+            photo = getCmTrackerUrl(cleanId);
+        } else if (inputVal) {
+            photo = inputVal;
+        }
+    } else {
+        name = document.getElementById('playerName').value.trim();
+        if (state.selectedPlayerPhoto) {
+            photo = state.selectedPlayerPhoto;
+        }
+    }
+
+    const priceInput = document.getElementById('playerPrice');
+    const price = parseInt(priceInput.value);
+    const pos = getCurrentPhase();
+
+    if (!name) {
+        showToast("⚠️ Bitte gib einen Spielernamen ein!");
+        return;
+    }
+
+    if (isNaN(price) || price < 0) {
+        showToast("⚠️ Bitte gib einen gültigen Preis ein!");
+        return;
+    }
+
+    const playerState = playerNum === 1 ? state.p1 : state.p2;
+
+    if (price > playerState.budget) {
+        showToast(`⚠️ Spieler ${playerNum} hat nicht genug Budget! (Rest: ${playerState.budget} €)`);
+        return;
+    }
+
+    if (playerState.squad[pos].length >= limits[pos]) {
+        showToast(`⚠️ Spieler ${playerNum} hat für ${pos.toUpperCase()} keinen freien Platz mehr!`);
+        return;
+    }
+
+    playerState.budget -= price;
+    playerState.squad[pos].push({ name, price, photo });
+
+    const slotIndex = playerState.squad[pos].length;
+    const slotEl = document.getElementById(`p${playerNum}-${pos}-${slotIndex}`);
+    
+    if (slotEl) {
+        slotEl.classList.add('filled');
+        slotEl.innerHTML = `
+            <div class="player-card">
+                <span class="pos-tag">${pos.toUpperCase()}</span>
+                <img class="player-face" src="${photo}" alt="${name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
+                <span class="name" title="${name}">${name}</span>
+                <span class="price">${price} €</span>
+            </div>
+        `;
+    }
+
+    updateBudgetDisplay(playerNum);
+
+    document.getElementById('playerName').value = '';
+    document.getElementById('customPlayerName').value = '';
+    document.getElementById('customPlayerImg').value = '';
+    priceInput.value = '';
+    state.selectedPlayerPhoto = null;
+
+    currentStepIndex++;
+
+    if (currentStepIndex >= DRAFT_SEQUENCE.length) {
+        checkCompletion(true);
+    } else {
+        updateUIPhase();
+    }
 }
     </script>
 </body>
