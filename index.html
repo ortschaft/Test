@@ -402,7 +402,7 @@
             height: 42px;
             border-radius: 50%;
             object-fit: cover;
-            background: rgba(255,255,255,0.1);
+            background: #334155;
             border: 1px solid #38bdf8;
             margin: 2px 0;
         }
@@ -442,7 +442,6 @@
             z-index: 100;
         }
 
-        /* Winner Overlay */
         .winner-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -504,22 +503,16 @@
             
             <div class="pitch">
                 <div class="pitch-center-circle"></div>
-                
-                <!-- Sturm Zone (Top) -->
                 <div class="pitch-zone">
                     <span class="zone-title">Sturm (2x)</span>
                     <div class="card-slot" id="p1-sturm-1"><span class="empty-label">Sturm 1</span></div>
                     <div class="card-slot" id="p1-sturm-2"><span class="empty-label">Sturm 2</span></div>
                 </div>
-
-                <!-- Mittelfeld Zone (Middle) -->
                 <div class="pitch-zone">
                     <span class="zone-title">Mittelfeld (2x)</span>
                     <div class="card-slot" id="p1-mittelfeld-1"><span class="empty-label">Mitte 1</span></div>
                     <div class="card-slot" id="p1-mittelfeld-2"><span class="empty-label">Mitte 2</span></div>
                 </div>
-
-                <!-- Abwehr Zone (Bottom) -->
                 <div class="pitch-zone">
                     <span class="zone-title">Abwehr (1x)</span>
                     <div class="card-slot" id="p1-abwehr-1"><span class="empty-label">Abwehr</span></div>
@@ -527,7 +520,7 @@
             </div>
         </div>
 
-        <!-- Spielleiter / Person 3 Control Panel -->
+        <!-- Spielleiter Control Panel -->
         <div class="admin-panel">
             <h2>
                 <span>🎮 Spielleiter</span>
@@ -542,13 +535,11 @@
                     </button>
                 </div>
 
-                <!-- Search Input Mode -->
                 <div id="searchContainer" style="position: relative;">
                     <input type="text" id="playerName" placeholder="Spieler suchen (z.B. Mbappé, Musiala...)" autocomplete="off" oninput="onSearchInput(this.value)">
                     <div id="searchResults" class="search-results-dropdown"></div>
                 </div>
 
-                <!-- Custom Input Mode -->
                 <div id="customContainer" style="display: none; flex-direction: column; gap: 6px;">
                     <input type="text" id="customPlayerName" placeholder="Name manuell eingeben...">
                     <input type="text" id="customPlayerImg" placeholder="Bild-URL (optional)...">
@@ -588,22 +579,16 @@
             
             <div class="pitch">
                 <div class="pitch-center-circle"></div>
-                
-                <!-- Sturm Zone (Top) -->
                 <div class="pitch-zone">
                     <span class="zone-title">Sturm (2x)</span>
                     <div class="card-slot" id="p2-sturm-1"><span class="empty-label">Sturm 1</span></div>
                     <div class="card-slot" id="p2-sturm-2"><span class="empty-label">Sturm 2</span></div>
                 </div>
-
-                <!-- Mittelfeld Zone (Middle) -->
                 <div class="pitch-zone">
                     <span class="zone-title">Mittelfeld (2x)</span>
                     <div class="card-slot" id="p2-mittelfeld-1"><span class="empty-label">Mitte 1</span></div>
                     <div class="card-slot" id="p2-mittelfeld-2"><span class="empty-label">Mitte 2</span></div>
                 </div>
-
-                <!-- Abwehr Zone (Bottom) -->
                 <div class="pitch-zone">
                     <span class="zone-title">Abwehr (1x)</span>
                     <div class="card-slot" id="p2-abwehr-1"><span class="empty-label">Abwehr</span></div>
@@ -623,17 +608,19 @@
     </div>
 
     <script>
+        // Schnelles, lokales Fallback-Icon (SVG ohne Netzwerkaufruf)
+        const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+
         const limits = { abwehr: 1, mittelfeld: 2, sturm: 2 };
         
         let state = {
             p1: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [] } },
             p2: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [] } },
-            currentPhase: 'sturm', // Auto Phase: 'sturm' -> 'mittelfeld' -> 'abwehr'
+            currentPhase: 'sturm',
             selectedPlayerPhoto: null,
             isCustomMode: false
         };
 
-        // Standard-Beispiel-Datenbank (EA FC / CM Tracker Simulation mit echten CDN Headshots)
         const playerDatabase = [
             { name: "Kylian Mbappé", club: "Real Madrid", pos: "ST", photo: "https://cdn.sofifa.net/players/231/747/24_120.png" },
             { name: "Erling Haaland", club: "Man City", pos: "ST", photo: "https://cdn.sofifa.net/players/239/085/24_120.png" },
@@ -690,7 +677,7 @@
             } else {
                 resultsDiv.innerHTML = matches.map(p => `
                     <div class="search-item" onclick="selectSearchPlayer('${p.name.replace(/'/g, "\\'")}', '${p.photo}')">
-                        <img src="${p.photo}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/40?text=FC'">
+                        <img src="${p.photo}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
                         <div class="search-item-info">
                             <span class="search-item-name">${p.name}</span>
                             <span class="search-item-sub">${p.pos} • ${p.club}</span>
@@ -708,7 +695,6 @@
             document.getElementById('searchResults').style.display = 'none';
         }
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
             if (!e.target.closest('#searchContainer')) {
                 document.getElementById('searchResults').style.display = 'none';
@@ -719,20 +705,14 @@
             const p1 = state.p1.squad;
             const p2 = state.p2.squad;
 
-            // Check Sturm (2 for P1, 2 for P2 -> Total 4)
             if (p1.sturm.length < limits.sturm || p2.sturm.length < limits.sturm) {
                 state.currentPhase = 'sturm';
-            }
-            // Check Mittelfeld (2 for P1, 2 for P2 -> Total 4)
-            else if (p1.mittelfeld.length < limits.mittelfeld || p2.mittelfeld.length < limits.mittelfeld) {
+            } else if (p1.mittelfeld.length < limits.mittelfeld || p2.mittelfeld.length < limits.mittelfeld) {
                 state.currentPhase = 'mittelfeld';
-            }
-            // Check Abwehr (1 for P1, 1 for P2 -> Total 2)
-            else if (p1.abwehr.length < limits.abwehr || p2.abwehr.length < limits.abwehr) {
+            } else if (p1.abwehr.length < limits.abwehr || p2.abwehr.length < limits.abwehr) {
                 state.currentPhase = 'abwehr';
             }
 
-            // Update UI Badges & Buttons
             document.querySelectorAll('.pos-btn').forEach(btn => {
                 const isCurrent = btn.dataset.pos === state.currentPhase;
                 btn.classList.toggle('active', isCurrent);
@@ -751,7 +731,7 @@
 
         function assignPlayer(playerNum) {
             let name = "";
-            let photo = "https://via.placeholder.com/40?text=FC";
+            let photo = DEFAULT_AVATAR;
 
             if (state.isCustomMode) {
                 name = document.getElementById('customPlayerName').value.trim();
@@ -766,14 +746,13 @@
 
             const priceInput = document.getElementById('playerPrice');
             const price = parseInt(priceInput.value);
-            const pos = state.currentPhase; // Automatische Position!
+            const pos = state.currentPhase;
 
             if (!name) {
                 showToast("⚠️ Bitte gib einen Spielernamen ein!");
                 return;
             }
 
-            // 0 € Gebot ist ausdrücklich erlaubt! (price < 0 wird blockiert)
             if (isNaN(price) || price < 0) {
                 showToast("⚠️ Bitte gib einen gültigen Preis ein (ab 0 €)!");
                 return;
@@ -781,23 +760,19 @@
 
             const playerState = playerNum === 1 ? state.p1 : state.p2;
 
-            // Check Budget
             if (price > playerState.budget) {
                 showToast(`⚠️ Spieler ${playerNum} hat nicht genug Budget! (Rest: ${playerState.budget} €)`);
                 return;
             }
 
-            // Check Position Limit for current phase
             if (playerState.squad[pos].length >= limits[pos]) {
                 showToast(`⚠️ Spieler ${playerNum} hat die Position (${pos.toUpperCase()}) bereits voll!`);
                 return;
             }
 
-            // Execute Assign
             playerState.budget -= price;
             playerState.squad[pos].push({ name, price, photo });
 
-            // UI Render Card
             const slotIndex = playerState.squad[pos].length;
             const slotEl = document.getElementById(`p${playerNum}-${pos}-${slotIndex}`);
             
@@ -805,23 +780,20 @@
             slotEl.innerHTML = `
                 <div class="player-card">
                     <span class="pos-tag">${pos.toUpperCase()}</span>
-                    <img class="player-face" src="${photo}" alt="${name}" onerror="this.src='https://via.placeholder.com/40?text=FC'">
+                    <img class="player-face" src="${photo}" alt="${name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
                     <span class="name" title="${name}">${name}</span>
                     <span class="price">${price} €</span>
                 </div>
             `;
 
-            // Update Budget UI
             document.getElementById(`p${playerNum}Budget`).innerText = `${playerState.budget} €`;
 
-            // Reset Input
             document.getElementById('playerName').value = '';
             document.getElementById('customPlayerName').value = '';
             document.getElementById('customPlayerImg').value = '';
             priceInput.value = '';
             state.selectedPlayerPhoto = null;
 
-            // Phase / Turn Update
             updateAutoPhase();
             checkCompletion();
         }
@@ -861,7 +833,6 @@
             location.reload();
         }
 
-        // Initialisierung
         updateAutoPhase();
     </script>
 </body>
