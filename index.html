@@ -63,10 +63,10 @@
         /* Layout Grid */
         .game-container {
             display: grid;
-            grid-template-columns: 1fr 340px 1fr;
+            grid-template-columns: 1fr 360px 1fr;
             gap: 20px;
             width: 100%;
-            max-width: 1400px;
+            max-width: 1450px;
         }
 
         @media (max-width: 1100px) {
@@ -75,7 +75,7 @@
             }
         }
 
-        /* Control Panel (Person 3) */
+        /* Control Panel */
         .admin-panel {
             background: #1e293b;
             border: 2px solid #38bdf8;
@@ -110,6 +110,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
+            position: relative;
         }
 
         .form-group label {
@@ -118,7 +119,7 @@
             font-weight: 600;
         }
 
-        .form-group input, .form-group select {
+        .form-group input {
             padding: 10px 12px;
             background: #0f172a;
             border: 1px solid #475569;
@@ -126,10 +127,81 @@
             color: white;
             font-size: 0.95rem;
             outline: none;
+            width: 100%;
         }
 
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus {
             border-color: #38bdf8;
+        }
+
+        .btn-toggle-custom {
+            background: #334155;
+            color: #38bdf8;
+            border: 1px solid #475569;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-toggle-custom:hover {
+            background: #475569;
+        }
+
+        /* Live Search Dropdown */
+        .search-results-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #0f172a;
+            border: 1px solid #38bdf8;
+            border-radius: 8px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+            margin-top: 4px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .search-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #1e293b;
+            transition: background 0.2s;
+        }
+
+        .search-item:hover {
+            background: #1e293b;
+        }
+
+        .search-item img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #334155;
+        }
+
+        .search-item-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-item-name {
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #f8fafc;
+        }
+
+        .search-item-sub {
+            font-size: 0.75rem;
+            color: #94a3b8;
         }
 
         .pos-selector {
@@ -144,16 +216,19 @@
             color: white;
             padding: 10px 5px;
             border-radius: 8px;
-            cursor: pointer;
+            cursor: not-allowed;
             text-align: center;
             font-size: 0.85rem;
             font-weight: 600;
+            opacity: 0.5;
             transition: all 0.2s;
         }
 
         .pos-btn.active {
             background: #0284c7;
             border-color: #38bdf8;
+            opacity: 1;
+            cursor: pointer;
         }
 
         .action-buttons {
@@ -163,8 +238,7 @@
             margin-top: 10px;
         }
 
-        .btn-p1 {
-            background: linear-gradient(135deg, #16a34a, #15803d);
+        .btn-p1, .btn-p2 {
             color: white;
             border: none;
             padding: 12px;
@@ -174,16 +248,8 @@
             transition: transform 0.1s, opacity 0.2s;
         }
 
-        .btn-p2 {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-        }
+        .btn-p1 { background: linear-gradient(135deg, #16a34a, #15803d); }
+        .btn-p2 { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
 
         .btn-p1:hover, .btn-p2:hover {
             opacity: 0.9;
@@ -217,10 +283,7 @@
         .team-1 .team-header { border-left: 5px solid #22c55e; }
         .team-2 .team-header { border-left: 5px solid #3b82f6; }
 
-        .team-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
+        .team-title { font-size: 1.1rem; font-weight: bold; }
 
         .budget-tag {
             font-size: 1.2rem;
@@ -240,7 +303,7 @@
                 repeating-linear-gradient(0deg, #2e7d32, #2e7d32 40px, #266b2a 40px, #266b2a 80px);
             border: 3px solid rgba(255, 255, 255, 0.7);
             border-radius: 16px;
-            height: 520px;
+            height: 560px;
             position: relative;
             padding: 15px;
             display: flex;
@@ -250,24 +313,19 @@
             overflow: hidden;
         }
 
-        /* Pitch Markings */
         .pitch::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
+            top: 50%; left: 0; right: 0;
             height: 2px;
             background: rgba(255, 255, 255, 0.5);
         }
 
         .pitch-center-circle {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 90px;
-            height: 90px;
+            width: 90px; height: 90px;
             border: 2px solid rgba(255, 255, 255, 0.5);
             border-radius: 50%;
             pointer-events: none;
@@ -292,8 +350,8 @@
 
         /* Cards on Pitch */
         .card-slot {
-            width: 100px;
-            height: 110px;
+            width: 105px;
+            height: 125px;
             border: 2px dashed rgba(255, 255, 255, 0.4);
             border-radius: 10px;
             background: rgba(0, 0, 0, 0.2);
@@ -325,37 +383,49 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 6px;
+            justify-content: space-between;
+            padding: 6px 4px;
             text-align: center;
         }
 
         .player-card .pos-tag {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             background: #0284c7;
-            padding: 2px 6px;
+            padding: 1px 5px;
             border-radius: 4px;
             color: white;
             font-weight: bold;
-            margin-bottom: 4px;
+        }
+
+        .player-face {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #38bdf8;
+            margin: 2px 0;
         }
 
         .player-card .name {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: bold;
             color: white;
             line-height: 1.1;
             word-break: break-word;
-            margin-bottom: 6px;
+            max-width: 95px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .player-card .price {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 800;
             color: #facc15;
-            background: rgba(0,0,0,0.4);
-            padding: 2px 8px;
-            border-radius: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 1px 6px;
+            border-radius: 8px;
         }
 
         .toast {
@@ -415,12 +485,12 @@
 <body>
 
     <header>
-        <h1>⚽ 3-Spieler Squad Builder</h1>
+        <h1>Squad Builder</h1>
         <p>2 Manager (je 25 €) | 1 Spielleiter (Auktionsmeister)</p>
     </header>
 
     <div class="sequence-bar">
-        <span>Empfohlene Reihenfolge:</span>
+        <span>Aktuelle Phase:</span>
         <span class="sequence-badge" id="sequenceBadge">1. STURM</span>
     </div>
 
@@ -465,22 +535,38 @@
             </h2>
 
             <div class="form-group">
-                <label for="playerName">Name des Fußballspielers:</label>
-                <input type="text" id="playerName" placeholder="z.B. Mbappé, Musiala..." autocomplete="off">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="playerName">Fußballspieler:</label>
+                    <button type="button" class="btn-toggle-custom" id="toggleCustomBtn" onclick="toggleCustomMode()">
+                        ✏️ Custom Spieler
+                    </button>
+                </div>
+
+                <!-- Search Input Mode -->
+                <div id="searchContainer" style="position: relative;">
+                    <input type="text" id="playerName" placeholder="Spieler suchen (z.B. Mbappé, Musiala...)" autocomplete="off" oninput="onSearchInput(this.value)">
+                    <div id="searchResults" class="search-results-dropdown"></div>
+                </div>
+
+                <!-- Custom Input Mode -->
+                <div id="customContainer" style="display: none; flex-direction: column; gap: 6px;">
+                    <input type="text" id="customPlayerName" placeholder="Name manuell eingeben...">
+                    <input type="text" id="customPlayerImg" placeholder="Bild-URL (optional)...">
+                </div>
             </div>
 
             <div class="form-group">
-                <label>Position auswählen:</label>
+                <label>Aktuelle Phase (Automatisch):</label>
                 <div class="pos-selector">
-                    <div class="pos-btn active" data-pos="sturm" onclick="selectPosition('sturm')">⚡ Sturm</div>
-                    <div class="pos-btn" data-pos="mittelfeld" onclick="selectPosition('mittelfeld')">⚙️ Mitte</div>
-                    <div class="pos-btn" data-pos="abwehr" onclick="selectPosition('abwehr')">🛡️ Abwehr</div>
+                    <div class="pos-btn" id="pos-sturm" data-pos="sturm">⚡ Sturm</div>
+                    <div class="pos-btn" id="pos-mittelfeld" data-pos="mittelfeld">⚙️ Mitte</div>
+                    <div class="pos-btn" id="pos-abwehr" data-pos="abwehr">🛡️ Abwehr</div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="playerPrice">Preis / Gebot (€):</label>
-                <input type="number" id="playerPrice" min="0" max="25" placeholder="z.B. 8">
+                <input type="number" id="playerPrice" min="0" max="25" placeholder="0 oder höher (z.B. 0, 5, 8)">
             </div>
 
             <div class="action-buttons">
@@ -542,16 +628,117 @@
         let state = {
             p1: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [] } },
             p2: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [] } },
-            selectedPos: 'sturm',
-            sequenceOrder: ['sturm', 'mittelfeld', 'abwehr', 'mittelfeld', 'sturm'],
-            seqIndex: 0
+            currentPhase: 'sturm', // Auto Phase: 'sturm' -> 'mittelfeld' -> 'abwehr'
+            selectedPlayerPhoto: null,
+            isCustomMode: false
         };
 
-        function selectPosition(pos) {
-            state.selectedPos = pos;
+        // Standard-Beispiel-Datenbank (EA FC / CM Tracker Simulation mit echten CDN Headshots)
+        const playerDatabase = [
+            { name: "Kylian Mbappé", club: "Real Madrid", pos: "ST", photo: "https://cdn.sofifa.net/players/231/747/24_120.png" },
+            { name: "Erling Haaland", club: "Man City", pos: "ST", photo: "https://cdn.sofifa.net/players/239/085/24_120.png" },
+            { name: "Jamal Musiala", club: "FC Bayern", pos: "CAM", photo: "https://cdn.sofifa.net/players/256/630/24_120.png" },
+            { name: "Jude Bellingham", club: "Real Madrid", pos: "CAM", photo: "https://cdn.sofifa.net/players/252/371/24_120.png" },
+            { name: "Florian Wirtz", club: "Bayer 04", pos: "CAM", photo: "https://cdn.sofifa.net/players/256/634/24_120.png" },
+            { name: "Harry Kane", club: "FC Bayern", pos: "ST", photo: "https://cdn.sofifa.net/players/202/126/24_120.png" },
+            { name: "Vinícius Júnior", club: "Real Madrid", pos: "LW", photo: "https://cdn.sofifa.net/players/238/794/24_120.png" },
+            { name: "Mohamed Salah", club: "Liverpool", pos: "RW", photo: "https://cdn.sofifa.net/players/209/331/24_120.png" },
+            { name: "Kevin De Bruyne", club: "Man City", pos: "CM", photo: "https://cdn.sofifa.net/players/192/985/24_120.png" },
+            { name: "Rodri", club: "Man City", pos: "CDM", photo: "https://cdn.sofifa.net/players/231/866/24_120.png" },
+            { name: "Virgil van Dijk", club: "Liverpool", pos: "CB", photo: "https://cdn.sofifa.net/players/203/376/24_120.png" },
+            { name: "Antonio Rüdiger", club: "Real Madrid", pos: "CB", photo: "https://cdn.sofifa.net/players/205/452/24_120.png" },
+            { name: "William Saliba", club: "Arsenal", pos: "CB", photo: "https://cdn.sofifa.net/players/243/715/24_120.png" },
+            { name: "Alphonso Davies", club: "FC Bayern", pos: "LB", photo: "https://cdn.sofifa.net/players/234/396/24_120.png" },
+            { name: "Jeremie Frimpong", club: "Bayer 04", pos: "RB", photo: "https://cdn.sofifa.net/players/251/809/24_120.png" },
+            { name: "Cristiano Ronaldo", club: "Al Nassr", pos: "ST", photo: "https://cdn.sofifa.net/players/020/801/24_120.png" },
+            { name: "Lionel Messi", club: "Inter Miami", pos: "RW", photo: "https://cdn.sofifa.net/players/158/023/24_120.png" },
+            { name: "Neymar Jr", club: "Al Hilal", pos: "LW", photo: "https://cdn.sofifa.net/players/190/871/24_120.png" },
+            { name: "Lamine Yamal", club: "FC Barcelona", pos: "RW", photo: "https://cdn.sofifa.net/players/277/827/24_120.png" },
+            { name: "Pedri", club: "FC Barcelona", pos: "CM", photo: "https://cdn.sofifa.net/players/251/854/24_120.png" }
+        ];
+
+        function toggleCustomMode() {
+            state.isCustomMode = !state.isCustomMode;
+            const btn = document.getElementById('toggleCustomBtn');
+            const searchContainer = document.getElementById('searchContainer');
+            const customContainer = document.getElementById('customContainer');
+
+            if (state.isCustomMode) {
+                btn.innerText = "🔍 DB Suche";
+                searchContainer.style.display = 'none';
+                customContainer.style.display = 'flex';
+            } else {
+                btn.innerText = "✏️ Custom Spieler";
+                searchContainer.style.display = 'block';
+                customContainer.style.display = 'none';
+            }
+        }
+
+        function onSearchInput(val) {
+            const resultsDiv = document.getElementById('searchResults');
+            const query = val.toLowerCase().trim();
+
+            if (!query) {
+                resultsDiv.style.display = 'none';
+                return;
+            }
+
+            const matches = playerDatabase.filter(p => p.name.toLowerCase().includes(query) || p.club.toLowerCase().includes(query));
+
+            if (matches.length === 0) {
+                resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">Kein Spieler gefunden. Nutze "Custom Spieler".</div>`;
+            } else {
+                resultsDiv.innerHTML = matches.map(p => `
+                    <div class="search-item" onclick="selectSearchPlayer('${p.name.replace(/'/g, "\\'")}', '${p.photo}')">
+                        <img src="${p.photo}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/40?text=FC'">
+                        <div class="search-item-info">
+                            <span class="search-item-name">${p.name}</span>
+                            <span class="search-item-sub">${p.pos} • ${p.club}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            resultsDiv.style.display = 'block';
+        }
+
+        function selectSearchPlayer(name, photo) {
+            document.getElementById('playerName').value = name;
+            state.selectedPlayerPhoto = photo;
+            document.getElementById('searchResults').style.display = 'none';
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#searchContainer')) {
+                document.getElementById('searchResults').style.display = 'none';
+            }
+        });
+
+        function updateAutoPhase() {
+            const p1 = state.p1.squad;
+            const p2 = state.p2.squad;
+
+            // Check Sturm (2 for P1, 2 for P2 -> Total 4)
+            if (p1.sturm.length < limits.sturm || p2.sturm.length < limits.sturm) {
+                state.currentPhase = 'sturm';
+            }
+            // Check Mittelfeld (2 for P1, 2 for P2 -> Total 4)
+            else if (p1.mittelfeld.length < limits.mittelfeld || p2.mittelfeld.length < limits.mittelfeld) {
+                state.currentPhase = 'mittelfeld';
+            }
+            // Check Abwehr (1 for P1, 1 for P2 -> Total 2)
+            else if (p1.abwehr.length < limits.abwehr || p2.abwehr.length < limits.abwehr) {
+                state.currentPhase = 'abwehr';
+            }
+
+            // Update UI Badges & Buttons
             document.querySelectorAll('.pos-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.pos === pos);
+                const isCurrent = btn.dataset.pos === state.currentPhase;
+                btn.classList.toggle('active', isCurrent);
             });
+
+            document.getElementById('sequenceBadge').innerText = `${state.currentPhase.toUpperCase()}`;
             updateButtonsState();
         }
 
@@ -563,23 +750,36 @@
         }
 
         function assignPlayer(playerNum) {
-            const nameInput = document.getElementById('playerName');
+            let name = "";
+            let photo = "https://via.placeholder.com/40?text=FC";
+
+            if (state.isCustomMode) {
+                name = document.getElementById('customPlayerName').value.trim();
+                const customImg = document.getElementById('customPlayerImg').value.trim();
+                if (customImg) photo = customImg;
+            } else {
+                name = document.getElementById('playerName').value.trim();
+                if (state.selectedPlayerPhoto) {
+                    photo = state.selectedPlayerPhoto;
+                }
+            }
+
             const priceInput = document.getElementById('playerPrice');
-            const name = nameInput.value.trim();
             const price = parseInt(priceInput.value);
-            const pos = state.selectedPos;
+            const pos = state.currentPhase; // Automatische Position!
 
             if (!name) {
                 showToast("⚠️ Bitte gib einen Spielernamen ein!");
                 return;
             }
-            if (isNaN(price) || price <= 0) {
-                showToast("⚠️ Bitte gib einen gültigen Preis ein!");
+
+            // 0 € Gebot ist ausdrücklich erlaubt! (price < 0 wird blockiert)
+            if (isNaN(price) || price < 0) {
+                showToast("⚠️ Bitte gib einen gültigen Preis ein (ab 0 €)!");
                 return;
             }
 
             const playerState = playerNum === 1 ? state.p1 : state.p2;
-            const otherPlayerState = playerNum === 1 ? state.p2 : state.p1;
 
             // Check Budget
             if (price > playerState.budget) {
@@ -587,15 +787,15 @@
                 return;
             }
 
-            // Check Position Limit
+            // Check Position Limit for current phase
             if (playerState.squad[pos].length >= limits[pos]) {
-                showToast(`⚠️ Spieler ${playerNum} hat diese Position (${pos.toUpperCase()}) bereits voll!`);
+                showToast(`⚠️ Spieler ${playerNum} hat die Position (${pos.toUpperCase()}) bereits voll!`);
                 return;
             }
 
             // Execute Assign
             playerState.budget -= price;
-            playerState.squad[pos].push({ name, price });
+            playerState.squad[pos].push({ name, price, photo });
 
             // UI Render Card
             const slotIndex = playerState.squad[pos].length;
@@ -605,7 +805,8 @@
             slotEl.innerHTML = `
                 <div class="player-card">
                     <span class="pos-tag">${pos.toUpperCase()}</span>
-                    <span class="name">${name}</span>
+                    <img class="player-face" src="${photo}" alt="${name}" onerror="this.src='https://via.placeholder.com/40?text=FC'">
+                    <span class="name" title="${name}">${name}</span>
                     <span class="price">${price} €</span>
                 </div>
             `;
@@ -613,24 +814,21 @@
             // Update Budget UI
             document.getElementById(`p${playerNum}Budget`).innerText = `${playerState.budget} €`;
 
-            // Clear inputs
-            nameInput.value = '';
+            // Reset Input
+            document.getElementById('playerName').value = '';
+            document.getElementById('customPlayerName').value = '';
+            document.getElementById('customPlayerImg').value = '';
             priceInput.value = '';
+            state.selectedPlayerPhoto = null;
 
-            // Advance Sequence indicator if matched
-            if (pos === state.sequenceOrder[state.seqIndex]) {
-                state.seqIndex = (state.seqIndex + 1) % state.sequenceOrder.length;
-                document.getElementById('sequenceBadge').innerText = `${state.seqIndex + 1}. ${state.sequenceOrder[state.seqIndex].toUpperCase()}`;
-            }
-
-            updateButtonsState();
+            // Phase / Turn Update
+            updateAutoPhase();
             checkCompletion();
         }
 
         function updateButtonsState() {
-            const pos = state.selectedPos;
+            const pos = state.currentPhase;
 
-            // Disable button if player is full on position
             const p1Full = state.p1.squad[pos].length >= limits[pos];
             const p2Full = state.p2.squad[pos].length >= limits[pos];
 
@@ -638,9 +836,9 @@
             document.getElementById('btnAssignP2').disabled = p2Full;
 
             if (p1Full && !p2Full) {
-                showToast(`💡 Hinweis: Spieler 1 ist bei ${pos.toUpperCase()} voll. Dieser Spieler MUSS an Spieler 2 gehen!`);
+                showToast(`💡 Hinweis: Spieler 1 ist bei ${pos.toUpperCase()} voll. Spieler MUSS an Spieler 2 gehen!`);
             } else if (p2Full && !p1Full) {
-                showToast(`💡 Hinweis: Spieler 2 ist bei ${pos.toUpperCase()} voll. Dieser Spieler MUSS an Spieler 1 gehen!`);
+                showToast(`💡 Hinweis: Spieler 2 ist bei ${pos.toUpperCase()} voll. Spieler MUSS an Spieler 1 gehen!`);
             }
         }
 
@@ -663,8 +861,8 @@
             location.reload();
         }
 
-        // Initialize state check
-        updateButtonsState();
+        // Initialisierung
+        updateAutoPhase();
     </script>
 </body>
 </html>
