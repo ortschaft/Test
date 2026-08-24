@@ -657,23 +657,6 @@ function getCmTrackerUrl(id) {
     return `https://cmtracker.fra1.cdn.digitaloceanspaces.com/DB/26/heads/p${id}.png`;
 }
 
-// Dynamische Live-Datenbank aller EA FC Spieler
-let playerDatabase = [];
-let isDbLoaded = false;
-
-// Lädt im Hintergrund automatisch alle Spieler ohne API-Sperren
-async function loadLiveDatabase() {
-    try {
-        const res = await fetch("https://cdn.jsdelivr.net/gh/futhead/futhead-data@master/data/24/players.json");
-        const data = await res.json();
-        playerDatabase = data;
-        isDbLoaded = true;
-    } catch (err) {
-        console.warn("CDN-Fallback aktiv");
-    }
-}
-loadLiveDatabase();
-
 const DRAFT_SEQUENCE = [
     'sturm', 'mittelfeld', 'abwehr', 'torwart',
     'sturm', 'mittelfeld', 'abwehr', 'torwart',
@@ -682,6 +665,7 @@ const DRAFT_SEQUENCE = [
 
 const limits = { abwehr: 1, mittelfeld: 2, sturm: 2, torwart: 1 };
 let currentStepIndex = 0;
+let searchTimeout = null;
 
 let state = {
     p1: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
@@ -717,7 +701,7 @@ function toggleCustomMode() {
     const customContainer = document.getElementById('customContainer');
 
     if (state.isCustomMode) {
-        btn.innerText = "🔍 Live-Suche";
+        btn.innerText = "🔍 Suche";
         searchContainer.style.display = 'none';
         customContainer.style.display = 'flex';
     } else {
@@ -727,7 +711,7 @@ function toggleCustomMode() {
     }
 }
 
-// Live-Suche über die gesamte Datenbank
+// ECHTE LIVE-SUCHE ÜBER DAS INTERNET
 function onSearchInput(val) {
     const resultsDiv = document.getElementById('searchResults');
     const query = val.toLowerCase().trim();
@@ -737,37 +721,41 @@ function onSearchInput(val) {
         return;
     }
 
-    // Wenn die vollständige DB noch lädt, nutzen wir eine offene Online-Suche
-    if (!isDbLoaded || playerDatabase.length === 0) {
-        resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">⏳ Lade alle Spieler...</div>`;
-        resultsDiv.style.display = 'block';
-        return;
-    }
-
-    const matches = playerDatabase.filter(p => {
-        const nameMatch = p.name && p.name.toLowerCase().includes(query);
-        const clubMatch = p.club_name && p.club_name.toLowerCase().includes(query);
-        return nameMatch || clubMatch;
-    });
-
-    if (matches.length === 0) {
-        resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">Kein Spieler gefunden.</div>`;
-    } else {
-        resultsDiv.innerHTML = matches.slice(0, 10).map(p => {
-            const photo = getCmTrackerUrl(p.id);
-            return `
-                <div class="search-item" onclick="selectSearchPlayer('${(p.name || p.common_name).replace(/'/g, "\\'")}', '${photo}')">
-                    <img src="${photo}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
-                    <div class="search-item-info">
-                        <span class="search-item-name">${p.name || p.common_name}</span>
-                        <span class="search-item-sub">${p.position || 'ST'} • ID: ${p.id}</span>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
+    resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">🔍 Suche live im Internet...</div>`;
     resultsDiv.style.display = 'block';
+
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+        try {
+            // Holt Live-Ergebnisse über einen CORS-Proxy
+            const res = await fetch(`https://corsproxy.io/?https://www.futbin.com/search?year=25&term=${encodeURIComponent(query)}`);
+            
+            if (!res.ok) throw new Error("Netzwerkfehler");
+
+            const data = await res.json();
+
+            if (!Array.isArray(data) || data.length === 0) {
+                resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">Kein Spieler gefunden.</div>`;
+                return;
+            }
+
+            resultsDiv.innerHTML = data.slice(0, 8).map(p => {
+                const photo = getCmTrackerUrl(p.id);
+                const playerName = p.name.replace(/'/g, "\\'");
+                return `
+                    <div class="search-item" onclick="selectSearchPlayer('${playerName}', '${photo}')">
+                        <img src="${photo}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
+                        <div class="search-item-info">
+                            <span class="search-item-name">${p.name}</span>
+                            <span class="search-item-sub">${p.rating || ''} OVR • ${p.version || 'Base'}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (err) {
+            resultsDiv.innerHTML = `<div class="search-item" style="color: #ef4444;">Live-Suche blockiert. Nutze "Custom / ID".</div>`;
+        }
+    }, 350);
 }
 
 function selectSearchPlayer(name, photo) {
