@@ -651,269 +651,225 @@
     </div>
 
     <script>
-        const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
-        const DRAFT_SEQUENCE = [
-            'sturm', 'mittelfeld', 'abwehr', 'torwart',
-            'sturm', 'mittelfeld', 'abwehr', 'torwart',
-            'sturm', 'mittelfeld', 'sturm', 'mittelfeld'
-        ];
+const DRAFT_SEQUENCE = [
+    'sturm', 'mittelfeld', 'abwehr', 'torwart',
+    'sturm', 'mittelfeld', 'abwehr', 'torwart',
+    'sturm', 'mittelfeld', 'sturm', 'mittelfeld'
+];
 
-        const limits = { abwehr: 1, mittelfeld: 2, sturm: 2, torwart: 1 };
+const limits = { abwehr: 1, mittelfeld: 2, sturm: 2, torwart: 1 };
 
-        let currentStepIndex = 0;
+let currentStepIndex = 0;
 
-        let state = {
-            p1: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
-            p2: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
-            selectedPlayerPhoto: null,
-            isCustomMode: false
-        };
+let state = {
+    p1: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
+    p2: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
+    selectedPlayerPhoto: null,
+    isCustomMode: false
+};
 
-        // SoFIFA CDN Spielerbilder (Zuverlässige Links)
-        const playerDatabase = [
-            // STURM
-            { name: "Kylian Mbappé", club: "Real Madrid", pos: "ST", category: "sturm", photo: "https://cdn.sofifa.net/players/231/747/24_120.png" },
-            { name: "Erling Haaland", club: "Man City", pos: "ST", category: "sturm", photo: "https://cdn.sofifa.net/players/239/085/24_120.png" },
-            { name: "Vinícius Júnior", club: "Real Madrid", pos: "LW", category: "sturm", photo: "https://cdn.sofifa.net/players/238/794/24_120.png" },
-            { name: "Mohamed Salah", club: "Liverpool", pos: "RW", category: "sturm", photo: "https://cdn.sofifa.net/players/209/331/24_120.png" },
-            { name: "Harry Kane", club: "FC Bayern", pos: "ST", category: "sturm", photo: "https://cdn.sofifa.net/players/202/126/24_120.png" },
-            { name: "Lamine Yamal", club: "FC Barcelona", pos: "RW", category: "sturm", photo: "https://cdn.sofifa.net/players/277/827/24_120.png" },
-            { name: "Neymar Jr", club: "Al Hilal", pos: "LW", category: "sturm", photo: "https://cdn.sofifa.net/players/190/871/24_120.png" },
-            { name: "Cristiano Ronaldo", club: "Al Nassr", pos: "ST", category: "sturm", photo: "https://cdn.sofifa.net/players/020/801/24_120.png" },
+// Spielerdatenbank mit cmtracker.net CDN-Links
+const playerDatabase = [
+    // STURM
+    { id: "231747", name: "Kylian Mbappé", club: "Real Madrid", pos: "ST", category: "sturm", photo: "https://cmtracker.net/img/players/231747.png" },
+    { id: "239085", name: "Erling Haaland", club: "Man City", pos: "ST", category: "sturm", photo: "https://cmtracker.net/img/players/239085.png" },
+    { id: "238794", name: "Vinícius Júnior", club: "Real Madrid", pos: "LW", category: "sturm", photo: "https://cmtracker.net/img/players/238794.png" },
+    { id: "209331", name: "Mohamed Salah", club: "Liverpool", pos: "RW", category: "sturm", photo: "https://cmtracker.net/img/players/209331.png" },
+    { id: "202126", name: "Harry Kane", club: "FC Bayern", pos: "ST", category: "sturm", photo: "https://cmtracker.net/img/players/202126.png" },
+    { id: "277827", name: "Lamine Yamal", club: "FC Barcelona", pos: "RW", category: "sturm", photo: "https://cmtracker.net/img/players/277827.png" },
+    { id: "20801",  name: "Cristiano Ronaldo", club: "Al Nassr", pos: "ST", category: "sturm", photo: "https://cmtracker.net/img/players/20801.png" },
+    { id: "190871", name: "Neymar Jr", club: "Al Hilal", pos: "LW", category: "sturm", photo: "https://cmtracker.net/img/players/190871.png" },
 
-            // MITTELFELD
-            { name: "Jamal Musiala", club: "FC Bayern", pos: "CAM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/256/630/24_120.png" },
-            { name: "Jude Bellingham", club: "Real Madrid", pos: "CAM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/252/371/24_120.png" },
-            { name: "Florian Wirtz", club: "Bayer 04", pos: "CAM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/256/634/24_120.png" },
-            { name: "Kevin De Bruyne", club: "Man City", pos: "CM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/192/985/24_120.png" },
-            { name: "Rodri", club: "Man City", pos: "CDM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/231/866/24_120.png" },
-            { name: "Pedri", club: "FC Barcelona", pos: "CM", category: "mittelfeld", photo: "https://cdn.sofifa.net/players/251/854/24_120.png" },
+    // MITTELFELD
+    { id: "256630", name: "Jamal Musiala", club: "FC Bayern", pos: "CAM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/256630.png" },
+    { id: "252371", name: "Jude Bellingham", club: "Real Madrid", pos: "CAM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/252371.png" },
+    { id: "256634", name: "Florian Wirtz", club: "Bayer 04", pos: "CAM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/256634.png" },
+    { id: "192985", name: "Kevin De Bruyne", club: "Man City", pos: "CM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/192985.png" },
+    { id: "231866", name: "Rodri", club: "Man City", pos: "CDM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/231866.png" },
+    { id: "251854", name: "Pedri", club: "FC Barcelona", pos: "CM", category: "mittelfeld", photo: "https://cmtracker.net/img/players/251854.png" },
 
-            // ABWEHR
-            { name: "Virgil van Dijk", club: "Liverpool", pos: "CB", category: "abwehr", photo: "https://cdn.sofifa.net/players/203/376/24_120.png" },
-            { name: "Antonio Rüdiger", club: "Real Madrid", pos: "CB", category: "abwehr", photo: "https://cdn.sofifa.net/players/205/452/24_120.png" },
-            { name: "William Saliba", club: "Arsenal", pos: "CB", category: "abwehr", photo: "https://cdn.sofifa.net/players/243/715/24_120.png" },
-            { name: "Alphonso Davies", club: "FC Bayern", pos: "LB", category: "abwehr", photo: "https://cdn.sofifa.net/players/234/396/24_120.png" },
-            { name: "Jeremie Frimpong", club: "Bayer 04", pos: "RB", category: "abwehr", photo: "https://cdn.sofifa.net/players/251/809/24_120.png" },
+    // ABWEHR
+    { id: "203376", name: "Virgil van Dijk", club: "Liverpool", pos: "CB", category: "abwehr", photo: "https://cmtracker.net/img/players/203376.png" },
+    { id: "205452", name: "Antonio Rüdiger", club: "Real Madrid", pos: "CB", category: "abwehr", photo: "https://cmtracker.net/img/players/205452.png" },
+    { id: "243715", name: "William Saliba", club: "Arsenal", pos: "CB", category: "abwehr", photo: "https://cmtracker.net/img/players/243715.png" },
+    { id: "234396", name: "Alphonso Davies", club: "FC Bayern", pos: "LB", category: "abwehr", photo: "https://cmtracker.net/img/players/234396.png" },
+    { id: "251809", name: "Jeremie Frimpong", club: "Bayer 04", pos: "RB", category: "abwehr", photo: "https://cmtracker.net/img/players/251809.png" },
 
-            // TORWART
-            { name: "Manuel Neuer", club: "FC Bayern", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/167/495/24_120.png" },
-            { name: "Thibaut Courtois", club: "Real Madrid", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/192/119/24_120.png" },
-            { name: "Marc-André ter Stegen", club: "FC Barcelona", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/192/448/24_120.png" },
-            { name: "Alisson Becker", club: "Liverpool", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/212/831/24_120.png" },
-            { name: "Gianluigi Donnarumma", club: "PSG", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/230/621/24_120.png" },
-            { name: "Ederson", club: "Man City", pos: "TW", category: "torwart", photo: "https://cdn.sofifa.net/players/210/257/24_120.png" }
-        ];
+    // TORWART
+    { id: "167495", name: "Manuel Neuer", club: "FC Bayern", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/167495.png" },
+    { id: "192119", name: "Thibaut Courtois", club: "Real Madrid", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/192119.png" },
+    { id: "192448", name: "Marc-André ter Stegen", club: "FC Barcelona", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/192448.png" },
+    { id: "212831", name: "Alisson Becker", club: "Liverpool", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/212831.png" },
+    { id: "230621", name: "Gianluigi Donnarumma", club: "PSG", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/230621.png" },
+    { id: "210257", name: "Ederson", club: "Man City", pos: "TW", category: "torwart", photo: "https://cmtracker.net/img/players/210257.png" }
+];
 
-        function getCurrentPhase() {
-            return DRAFT_SEQUENCE[Math.min(currentStepIndex, DRAFT_SEQUENCE.length - 1)];
+function getCurrentPhase() {
+    return DRAFT_SEQUENCE[Math.min(currentStepIndex, DRAFT_SEQUENCE.length - 1)];
+}
+
+function updateBudgetDisplay(playerNum) {
+    const budget = state[`p${playerNum}`].budget;
+    const el = document.getElementById(`p${playerNum}Budget`);
+    el.innerText = `${budget} €`;
+
+    el.classList.remove('budget-green', 'budget-yellow', 'budget-red');
+
+    if (budget > 15) {
+        el.classList.add('budget-green');
+    } else if (budget >= 6) {
+        el.classList.add('budget-yellow');
+    } else {
+        el.classList.add('budget-red');
+    }
+}
+
+function toggleCustomMode() {
+    state.isCustomMode = !state.isCustomMode;
+    const btn = document.getElementById('toggleCustomBtn');
+    const searchContainer = document.getElementById('searchContainer');
+    const customContainer = document.getElementById('customContainer');
+
+    if (state.isCustomMode) {
+        btn.innerText = "🔍 DB Suche";
+        searchContainer.style.display = 'none';
+        customContainer.style.display = 'flex';
+    } else {
+        btn.innerText = "✏️ Custom / ID";
+        searchContainer.style.display = 'block';
+        customContainer.style.display = 'none';
+    }
+}
+
+function onSearchInput(val) {
+    const resultsDiv = document.getElementById('searchResults');
+    const query = val.toLowerCase().trim();
+    const currentPhase = getCurrentPhase();
+
+    if (!query) {
+        resultsDiv.style.display = 'none';
+        return;
+    }
+
+    const matches = playerDatabase.filter(p => 
+        p.category === currentPhase && 
+        (p.name.toLowerCase().includes(query) || p.club.toLowerCase().includes(query))
+    );
+
+    if (matches.length === 0) {
+        resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">Kein ${currentPhase.toUpperCase()}-Spieler in der Liste. Nutze "Custom / ID".</div>`;
+    } else {
+        resultsDiv.innerHTML = matches.map(p => `
+            <div class="search-item" onclick="selectSearchPlayer('${p.name.replace(/'/g, "\\'")}', '${p.photo}')">
+                <img src="${p.photo}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
+                <div class="search-item-info">
+                    <span class="search-item-name">${p.name}</span>
+                    <span class="search-item-sub">${p.pos} • ${p.club}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    resultsDiv.style.display = 'block';
+}
+
+function selectSearchPlayer(name, photo) {
+    document.getElementById('playerName').value = name;
+    state.selectedPlayerPhoto = photo;
+    document.getElementById('searchResults').style.display = 'none';
+}
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#searchContainer')) {
+        document.getElementById('searchResults').style.display = 'none';
+    }
+});
+
+function assignPlayer(playerNum) {
+    let name = "";
+    let photo = DEFAULT_AVATAR;
+
+    if (state.isCustomMode) {
+        name = document.getElementById('customPlayerName').value.trim();
+        const inputImg = document.getElementById('customPlayerImg').value.trim();
+        
+        // Wenn eine pure ID eingegeben wird, cmtracker.net URL generieren
+        if (/^\d+$/.test(inputImg)) {
+            photo = `https://cmtracker.net/img/players/${inputImg}.png`;
+        } else if (inputImg) {
+            photo = inputImg;
+        } else {
+            photo = DEFAULT_AVATAR;
         }
-
-        function updateBudgetDisplay(playerNum) {
-            const budget = state[`p${playerNum}`].budget;
-            const el = document.getElementById(`p${playerNum}Budget`);
-            el.innerText = `${budget} €`;
-
-            el.classList.remove('budget-green', 'budget-yellow', 'budget-red');
-
-            if (budget > 15) {
-                el.classList.add('budget-green');
-            } else if (budget >= 6) {
-                el.classList.add('budget-yellow');
-            } else {
-                el.classList.add('budget-red');
-            }
+    } else {
+        name = document.getElementById('playerName').value.trim();
+        if (state.selectedPlayerPhoto) {
+            photo = state.selectedPlayerPhoto;
         }
+    }
 
-        function toggleCustomMode() {
-            state.isCustomMode = !state.isCustomMode;
-            const btn = document.getElementById('toggleCustomBtn');
-            const searchContainer = document.getElementById('searchContainer');
-            const customContainer = document.getElementById('customContainer');
+    const priceInput = document.getElementById('playerPrice');
+    const price = parseInt(priceInput.value);
+    const pos = getCurrentPhase();
 
-            if (state.isCustomMode) {
-                btn.innerText = "🔍 DB Suche";
-                searchContainer.style.display = 'none';
-                customContainer.style.display = 'flex';
-            } else {
-                btn.innerText = "✏️ Custom Spieler";
-                searchContainer.style.display = 'block';
-                customContainer.style.display = 'none';
-            }
-        }
+    if (!name) {
+        showToast("⚠️ Bitte gib einen Spielernamen ein!");
+        return;
+    }
 
-        function onSearchInput(val) {
-            const resultsDiv = document.getElementById('searchResults');
-            const query = val.toLowerCase().trim();
-            const currentPhase = getCurrentPhase();
+    if (isNaN(price) || price < 0) {
+        showToast("⚠️ Bitte gib einen gültigen Preis ein!");
+        return;
+    }
 
-            if (!query) {
-                resultsDiv.style.display = 'none';
-                return;
-            }
+    const playerState = playerNum === 1 ? state.p1 : state.p2;
 
-            const matches = playerDatabase.filter(p => 
-                p.category === currentPhase && 
-                (p.name.toLowerCase().includes(query) || p.club.toLowerCase().includes(query))
-            );
+    if (price > playerState.budget) {
+        showToast(`⚠️ Spieler ${playerNum} hat nicht genug Budget! (Rest: ${playerState.budget} €)`);
+        return;
+    }
 
-            if (matches.length === 0) {
-                resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">Kein ${currentPhase.toUpperCase()}-Spieler gefunden. Nutze "Custom Spieler".</div>`;
-            } else {
-                resultsDiv.innerHTML = matches.map(p => `
-                    <div class="search-item" onclick="selectSearchPlayer('${p.name.replace(/'/g, "\\'")}', '${p.photo}')">
-                        <img src="${p.photo}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
-                        <div class="search-item-info">
-                            <span class="search-item-name">${p.name}</span>
-                            <span class="search-item-sub">${p.pos} • ${p.club}</span>
-                        </div>
-                    </div>
-                `).join('');
-            }
+    if (playerState.squad[pos].length >= limits[pos]) {
+        showToast(`⚠️ Spieler ${playerNum} hat für ${pos.toUpperCase()} keinen freien Platz mehr!`);
+        return;
+    }
 
-            resultsDiv.style.display = 'block';
-        }
+    playerState.budget -= price;
+    playerState.squad[pos].push({ name, price, photo });
 
-        function selectSearchPlayer(name, photo) {
-            document.getElementById('playerName').value = name;
-            state.selectedPlayerPhoto = photo;
-            document.getElementById('searchResults').style.display = 'none';
-        }
+    const slotIndex = playerState.squad[pos].length;
+    const slotEl = document.getElementById(`p${playerNum}-${pos}-${slotIndex}`);
+    
+    if (slotEl) {
+        slotEl.classList.add('filled');
+        slotEl.innerHTML = `
+            <div class="player-card">
+                <span class="pos-tag">${pos.toUpperCase()}</span>
+                <img class="player-face" src="${photo}" alt="${name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
+                <span class="name" title="${name}">${name}</span>
+                <span class="price">${price} €</span>
+            </div>
+        `;
+    }
 
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('#searchContainer')) {
-                document.getElementById('searchResults').style.display = 'none';
-            }
-        });
+    updateBudgetDisplay(playerNum);
 
-        function updateUIPhase() {
-            const currentPhase = getCurrentPhase();
-            const totalSteps = DRAFT_SEQUENCE.length;
-            const stepNum = Math.min(currentStepIndex + 1, totalSteps);
+    document.getElementById('playerName').value = '';
+    document.getElementById('customPlayerName').value = '';
+    document.getElementById('customPlayerImg').value = '';
+    priceInput.value = '';
+    state.selectedPlayerPhoto = null;
 
-            document.getElementById('sequenceBadge').innerText = `Runde ${stepNum}/${totalSteps}: ${currentPhase.toUpperCase()}`;
-            document.getElementById('filterHint').innerText = `🔍 Filter aktiv: Nur ${currentPhase.toUpperCase()}-Spieler`;
+    currentStepIndex++;
 
-            document.querySelectorAll('.pos-btn').forEach(btn => {
-                const pos = btn.id.replace('pos-', '');
-                btn.classList.toggle('active', pos === currentPhase);
-            });
-
-            updateButtonsState();
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 3000);
-        }
-
-        function assignPlayer(playerNum) {
-            let name = "";
-            let photo = DEFAULT_AVATAR;
-
-            if (state.isCustomMode) {
-                name = document.getElementById('customPlayerName').value.trim();
-                const customImg = document.getElementById('customPlayerImg').value.trim();
-                if (customImg) photo = customImg;
-            } else {
-                name = document.getElementById('playerName').value.trim();
-                if (state.selectedPlayerPhoto) {
-                    photo = state.selectedPlayerPhoto;
-                }
-            }
-
-            const priceInput = document.getElementById('playerPrice');
-            const price = parseInt(priceInput.value);
-            const pos = getCurrentPhase();
-
-            if (!name) {
-                showToast("⚠️ Bitte gib einen Spielernamen ein!");
-                return;
-            }
-
-            if (isNaN(price) || price < 0) {
-                showToast("⚠️ Bitte gib einen gültigen Preis ein (ab 0 €)!");
-                return;
-            }
-
-            const playerState = playerNum === 1 ? state.p1 : state.p2;
-
-            if (price > playerState.budget) {
-                showToast(`⚠️ Spieler ${playerNum} hat nicht genug Budget! (Rest: ${playerState.budget} €)`);
-                return;
-            }
-
-            if (playerState.squad[pos].length >= limits[pos]) {
-                showToast(`⚠️ Spieler ${playerNum} hat für ${pos.toUpperCase()} keinen freien Platz mehr!`);
-                return;
-            }
-
-            playerState.budget -= price;
-            playerState.squad[pos].push({ name, price, photo });
-
-            const slotIndex = playerState.squad[pos].length;
-            const slotEl = document.getElementById(`p${playerNum}-${pos}-${slotIndex}`);
-            
-            if (slotEl) {
-                slotEl.classList.add('filled');
-                slotEl.innerHTML = `
-                    <div class="player-card">
-                        <span class="pos-tag">${pos.toUpperCase()}</span>
-                        <img class="player-face" src="${photo}" alt="${name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
-                        <span class="name" title="${name}">${name}</span>
-                        <span class="price">${price} €</span>
-                    </div>
-                `;
-            }
-
-            // Budget-Anzeige und Farbe aktualisieren
-            updateBudgetDisplay(playerNum);
-
-            // Inputs zurücksetzen
-            document.getElementById('playerName').value = '';
-            document.getElementById('customPlayerName').value = '';
-            document.getElementById('customPlayerImg').value = '';
-            priceInput.value = '';
-            state.selectedPlayerPhoto = null;
-
-            currentStepIndex++;
-
-            if (currentStepIndex >= DRAFT_SEQUENCE.length) {
-                checkCompletion(true);
-            } else {
-                updateUIPhase();
-            }
-        }
-
-        function updateButtonsState() {
-            const pos = getCurrentPhase();
-
-            const p1Full = state.p1.squad[pos].length >= limits[pos];
-            const p2Full = state.p2.squad[pos].length >= limits[pos];
-
-            document.getElementById('btnAssignP1').disabled = p1Full;
-            document.getElementById('btnAssignP2').disabled = p2Full;
-        }
-
-        function checkCompletion(isFinished = false) {
-            if (isFinished || currentStepIndex >= DRAFT_SEQUENCE.length) {
-                const modal = document.getElementById('winnerModal');
-                const text = document.getElementById('winnerText');
-                text.innerHTML = `Alle 12 Picks wurden vergeben!<br><br>` +
-                    `🟢 Spieler 1 Restbudget: <b>${state.p1.budget} €</b><br>` +
-                    `🔵 Spieler 2 Restbudget: <b>${state.p2.budget} €</b>`;
-                modal.style.display = 'flex';
-            }
-        }
-
-        function resetGame() {
-            location.reload();
-        }
-
+    if (currentStepIndex >= DRAFT_SEQUENCE.length) {
+        checkCompletion(true);
+    } else {
         updateUIPhase();
+    }
+}
     </script>
 </body>
 </html>
