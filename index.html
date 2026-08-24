@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Squad Builder</title>
+    <title>Squad Builder - Live Auction</title>
     <style>
         * {
             box-sizing: border-box;
@@ -19,37 +19,38 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
         }
 
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         header h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: #38bdf8;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         header p {
             color: #94a3b8;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .sequence-bar {
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid #334155;
-            padding: 10px 20px;
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid #38bdf8;
+            padding: 8px 18px;
             border-radius: 30px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             font-weight: 600;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.15);
         }
 
         .sequence-badge {
@@ -58,41 +59,40 @@
             padding: 4px 12px;
             border-radius: 15px;
             font-size: 0.85rem;
+            letter-spacing: 0.5px;
         }
 
-        /* Layout Grid */
         .game-container {
             display: grid;
             grid-template-columns: 1fr 360px 1fr;
-            gap: 20px;
+            gap: 15px;
             width: 100%;
-            max-width: 1450px;
+            max-width: 1500px;
         }
 
-        @media (max-width: 1100px) {
+        @media (max-width: 1150px) {
             .game-container {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Control Panel */
         .admin-panel {
             background: #1e293b;
             border: 2px solid #38bdf8;
             border-radius: 16px;
-            padding: 20px;
+            padding: 18px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             height: fit-content;
         }
 
         .admin-panel h2 {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             color: #38bdf8;
             border-bottom: 1px solid #334155;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -109,7 +109,7 @@
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
             position: relative;
         }
 
@@ -134,6 +134,12 @@
             border-color: #38bdf8;
         }
 
+        .filter-hint {
+            font-size: 0.75rem;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
         .btn-toggle-custom {
             background: #334155;
             color: #38bdf8;
@@ -149,7 +155,6 @@
             background: #475569;
         }
 
-        /* Live Search Dropdown */
         .search-results-dropdown {
             position: absolute;
             top: 100%;
@@ -158,12 +163,12 @@
             background: #0f172a;
             border: 1px solid #38bdf8;
             border-radius: 8px;
-            max-height: 220px;
+            max-height: 230px;
             overflow-y: auto;
             z-index: 50;
             display: none;
             margin-top: 4px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
         }
 
         .search-item {
@@ -181,11 +186,12 @@
         }
 
         .search-item img {
-            width: 35px;
-            height: 35px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             object-fit: cover;
             background: #334155;
+            border: 1px solid #475569;
         }
 
         .search-item-info {
@@ -204,23 +210,22 @@
             color: #94a3b8;
         }
 
-        .pos-selector {
+        .pos-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
         }
 
         .pos-btn {
             background: #0f172a;
             border: 1px solid #475569;
             color: white;
-            padding: 10px 5px;
+            padding: 8px 2px;
             border-radius: 8px;
-            cursor: not-allowed;
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            opacity: 0.5;
+            opacity: 0.4;
             transition: all 0.2s;
         }
 
@@ -228,20 +233,20 @@
             background: #0284c7;
             border-color: #38bdf8;
             opacity: 1;
-            cursor: pointer;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
         }
 
         .action-buttons {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 8px;
+            margin-top: 5px;
         }
 
         .btn-p1, .btn-p2 {
             color: white;
             border: none;
-            padding: 12px;
+            padding: 11px;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
@@ -259,20 +264,19 @@
         .btn-p1:disabled, .btn-p2:disabled {
             background: #475569;
             cursor: not-allowed;
-            opacity: 0.5;
+            opacity: 0.4;
             transform: none;
         }
 
-        /* Pitch & Teams */
         .team-column {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .team-header {
             background: #1e293b;
-            padding: 15px 20px;
+            padding: 12px 18px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
@@ -283,32 +287,32 @@
         .team-1 .team-header { border-left: 5px solid #22c55e; }
         .team-2 .team-header { border-left: 5px solid #3b82f6; }
 
-        .team-title { font-size: 1.1rem; font-weight: bold; }
+        .team-title { font-size: 1.05rem; font-weight: bold; }
 
         .budget-tag {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             font-weight: 800;
             color: #facc15;
             background: rgba(250, 204, 21, 0.1);
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
             border: 1px solid rgba(250, 204, 21, 0.3);
         }
 
-        /* Football Pitch Styling */
+        /* Spielfeld Design */
         .pitch {
             background: #2e7d32;
             background-image: 
                 linear-gradient(to bottom, rgba(255,255,255,0.08) 50%, transparent 50%),
-                repeating-linear-gradient(0deg, #2e7d32, #2e7d32 40px, #266b2a 40px, #266b2a 80px);
+                repeating-linear-gradient(0deg, #2e7d32, #2e7d32 35px, #266b2a 35px, #266b2a 70px);
             border: 3px solid rgba(255, 255, 255, 0.7);
             border-radius: 16px;
-            height: 560px;
+            height: 640px;
             position: relative;
-            padding: 15px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: space-around;
             box-shadow: inset 0 0 50px rgba(0,0,0,0.3);
             overflow: hidden;
         }
@@ -325,7 +329,7 @@
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 90px; height: 90px;
+            width: 80px; height: 80px;
             border: 2px solid rgba(255, 255, 255, 0.5);
             border-radius: 50%;
             pointer-events: none;
@@ -334,45 +338,45 @@
         .pitch-zone {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 8px;
             z-index: 2;
+            position: relative;
         }
 
         .zone-title {
             position: absolute;
-            left: 10px;
-            font-size: 0.65rem;
-            color: rgba(255, 255, 255, 0.4);
+            left: 5px;
+            top: -2px;
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.45);
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: bold;
         }
 
-        /* Cards on Pitch */
         .card-slot {
-            width: 105px;
-            height: 125px;
+            width: 92px;
+            height: 115px;
             border: 2px dashed rgba(255, 255, 255, 0.4);
             border-radius: 10px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.25);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             transition: all 0.3s;
-            position: relative;
         }
 
         .card-slot.filled {
             border-style: solid;
             border-color: #facc15;
             background: #1e293b;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         }
 
         .card-slot.empty-label {
             color: rgba(255, 255, 255, 0.5);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: bold;
             text-transform: uppercase;
         }
@@ -384,48 +388,46 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            padding: 6px 4px;
+            padding: 5px 3px;
             text-align: center;
         }
 
         .player-card .pos-tag {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             background: #0284c7;
-            padding: 1px 5px;
+            padding: 1px 4px;
             border-radius: 4px;
             color: white;
             font-weight: bold;
         }
 
         .player-face {
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             object-fit: cover;
             background: #334155;
             border: 1px solid #38bdf8;
-            margin: 2px 0;
         }
 
         .player-card .name {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: bold;
             color: white;
             line-height: 1.1;
-            word-break: break-word;
-            max-width: 95px;
+            max-width: 85px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .player-card .price {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 800;
             color: #facc15;
-            background: rgba(0,0,0,0.5);
-            padding: 1px 6px;
-            border-radius: 8px;
+            background: rgba(0,0,0,0.6);
+            padding: 1px 5px;
+            border-radius: 6px;
         }
 
         .toast {
@@ -437,7 +439,7 @@
             padding: 12px 20px;
             border-radius: 8px;
             font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
             display: none;
             z-index: 100;
         }
@@ -445,7 +447,7 @@
         .winner-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.95);
             display: none;
             justify-content: center;
             align-items: center;
@@ -485,12 +487,12 @@
 
     <header>
         <h1>Squad Builder</h1>
-        <p>2 Manager (je 25 €) | 1 Spielleiter (Auktionsmeister)</p>
+        <p>2 Manager (je 25 €) | Exakte Auktions-Reihenfolge mit Torwart</p>
     </header>
 
     <div class="sequence-bar">
-        <span>Aktuelle Phase:</span>
-        <span class="sequence-badge" id="sequenceBadge">1. STURM</span>
+        <span>Aktueller Pick:</span>
+        <span class="sequence-badge" id="sequenceBadge">Runde 1/12: STURM</span>
     </div>
 
     <div class="game-container">
@@ -503,24 +505,36 @@
             
             <div class="pitch">
                 <div class="pitch-center-circle"></div>
+                
+                <!-- Sturm (Top) -->
                 <div class="pitch-zone">
-                    <span class="zone-title">Sturm (2x)</span>
-                    <div class="card-slot" id="p1-sturm-1"><span class="empty-label">Sturm 1</span></div>
-                    <div class="card-slot" id="p1-sturm-2"><span class="empty-label">Sturm 2</span></div>
+                    <span class="zone-title">Sturm</span>
+                    <div class="card-slot" id="p1-sturm-1"><span class="empty-label">ST 1</span></div>
+                    <div class="card-slot" id="p1-sturm-2"><span class="empty-label">ST 2</span></div>
                 </div>
+
+                <!-- Mittelfeld (Middle) -->
                 <div class="pitch-zone">
-                    <span class="zone-title">Mittelfeld (2x)</span>
-                    <div class="card-slot" id="p1-mittelfeld-1"><span class="empty-label">Mitte 1</span></div>
-                    <div class="card-slot" id="p1-mittelfeld-2"><span class="empty-label">Mitte 2</span></div>
+                    <span class="zone-title">Mittelfeld</span>
+                    <div class="card-slot" id="p1-mittelfeld-1"><span class="empty-label">MF 1</span></div>
+                    <div class="card-slot" id="p1-mittelfeld-2"><span class="empty-label">MF 2</span></div>
                 </div>
+
+                <!-- Abwehr -->
                 <div class="pitch-zone">
-                    <span class="zone-title">Abwehr (1x)</span>
-                    <div class="card-slot" id="p1-abwehr-1"><span class="empty-label">Abwehr</span></div>
+                    <span class="zone-title">Abwehr</span>
+                    <div class="card-slot" id="p1-abwehr-1"><span class="empty-label">ABW 1</span></div>
+                </div>
+
+                <!-- Torwart (Bottom) -->
+                <div class="pitch-zone">
+                    <span class="zone-title">Torwart</span>
+                    <div class="card-slot" id="p1-torwart-1"><span class="empty-label">TW</span></div>
                 </div>
             </div>
         </div>
 
-        <!-- Spielleiter Control Panel -->
+        <!-- Spielleiter Panel -->
         <div class="admin-panel">
             <h2>
                 <span>🎮 Spielleiter</span>
@@ -528,36 +542,38 @@
             </h2>
 
             <div class="form-group">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
                     <label for="playerName">Fußballspieler:</label>
                     <button type="button" class="btn-toggle-custom" id="toggleCustomBtn" onclick="toggleCustomMode()">
                         ✏️ Custom Spieler
                     </button>
                 </div>
+                <div class="filter-hint" id="filterHint">🔍 Filter aktiv: Nur STURM-Spieler</div>
 
-                <div id="searchContainer" style="position: relative;">
-                    <input type="text" id="playerName" placeholder="Spieler suchen (z.B. Mbappé, Musiala...)" autocomplete="off" oninput="onSearchInput(this.value)">
+                <div id="searchContainer" style="position: relative; margin-top: 4px;">
+                    <input type="text" id="playerName" placeholder="Spieler suchen..." autocomplete="off" oninput="onSearchInput(this.value)">
                     <div id="searchResults" class="search-results-dropdown"></div>
                 </div>
 
-                <div id="customContainer" style="display: none; flex-direction: column; gap: 6px;">
+                <div id="customContainer" style="display: none; flex-direction: column; gap: 6px; margin-top: 4px;">
                     <input type="text" id="customPlayerName" placeholder="Name manuell eingeben...">
                     <input type="text" id="customPlayerImg" placeholder="Bild-URL (optional)...">
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Aktuelle Phase (Automatisch):</label>
-                <div class="pos-selector">
-                    <div class="pos-btn" id="pos-sturm" data-pos="sturm">⚡ Sturm</div>
-                    <div class="pos-btn" id="pos-mittelfeld" data-pos="mittelfeld">⚙️ Mitte</div>
-                    <div class="pos-btn" id="pos-abwehr" data-pos="abwehr">🛡️ Abwehr</div>
+                <label>Aktuelle Position:</label>
+                <div class="pos-grid">
+                    <div class="pos-btn" id="pos-sturm">⚡ Sturm</div>
+                    <div class="pos-btn" id="pos-mittelfeld">⚙️ Mitte</div>
+                    <div class="pos-btn" id="pos-abwehr">🛡️ Abwehr</div>
+                    <div class="pos-btn" id="pos-torwart">🧤 Torwart</div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="playerPrice">Preis / Gebot (€):</label>
-                <input type="number" id="playerPrice" min="0" max="25" placeholder="0 oder höher (z.B. 0, 5, 8)">
+                <input type="number" id="playerPrice" min="0" max="25" placeholder="0 oder höher (z.B. 0, 4, 7)">
             </div>
 
             <div class="action-buttons">
@@ -579,19 +595,27 @@
             
             <div class="pitch">
                 <div class="pitch-center-circle"></div>
+                
                 <div class="pitch-zone">
-                    <span class="zone-title">Sturm (2x)</span>
-                    <div class="card-slot" id="p2-sturm-1"><span class="empty-label">Sturm 1</span></div>
-                    <div class="card-slot" id="p2-sturm-2"><span class="empty-label">Sturm 2</span></div>
+                    <span class="zone-title">Sturm</span>
+                    <div class="card-slot" id="p2-sturm-1"><span class="empty-label">ST 1</span></div>
+                    <div class="card-slot" id="p2-sturm-2"><span class="empty-label">ST 2</span></div>
                 </div>
+
                 <div class="pitch-zone">
-                    <span class="zone-title">Mittelfeld (2x)</span>
-                    <div class="card-slot" id="p2-mittelfeld-1"><span class="empty-label">Mitte 1</span></div>
-                    <div class="card-slot" id="p2-mittelfeld-2"><span class="empty-label">Mitte 2</span></div>
+                    <span class="zone-title">Mittelfeld</span>
+                    <div class="card-slot" id="p2-mittelfeld-1"><span class="empty-label">MF 1</span></div>
+                    <div class="card-slot" id="p2-mittelfeld-2"><span class="empty-label">MF 2</span></div>
                 </div>
+
                 <div class="pitch-zone">
-                    <span class="zone-title">Abwehr (1x)</span>
-                    <div class="card-slot" id="p2-abwehr-1"><span class="empty-label">Abwehr</span></div>
+                    <span class="zone-title">Abwehr</span>
+                    <div class="card-slot" id="p2-abwehr-1"><span class="empty-label">ABW 1</span></div>
+                </div>
+
+                <div class="pitch-zone">
+                    <span class="zone-title">Torwart</span>
+                    <div class="card-slot" id="p2-torwart-1"><span class="empty-label">TW</span></div>
                 </div>
             </div>
         </div>
@@ -601,48 +625,75 @@
 
     <div class="winner-modal" id="winnerModal">
         <div class="winner-content">
-            <h2>🎉 Teams Komplett!</h2>
+            <h2>🎉 Auktionsrunde Beendet!</h2>
             <p id="winnerText" style="color: #cbd5e1; margin-bottom: 15px;"></p>
             <button class="reset-btn" onclick="resetGame()">Neues Spiel starten</button>
         </div>
     </div>
 
     <script>
-        // Schnelles, lokales Fallback-Icon (SVG ohne Netzwerkaufruf)
+        // Lokales SVG Avatar Icon als absoluter Fallback
         const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
-        const limits = { abwehr: 1, mittelfeld: 2, sturm: 2 };
-        
+        // Exakte 12-Schritte Reihenfolge aus deiner Vorgabe:
+        // Sturm -> Mittelfeld -> Abwehr -> Torwart -> Sturm -> Mittelfeld -> Abwehr -> Torwart -> Sturm -> Mittelfeld -> Sturm -> Mittelfeld
+        const DRAFT_SEQUENCE = [
+            'sturm', 'mittelfeld', 'abwehr', 'torwart',
+            'sturm', 'mittelfeld', 'abwehr', 'torwart',
+            'sturm', 'mittelfeld', 'sturm', 'mittelfeld'
+        ];
+
+        // Maximale Plätze pro Team
+        const limits = { abwehr: 1, mittelfeld: 2, sturm: 2, torwart: 1 };
+
+        let currentStepIndex = 0;
+
         let state = {
-            p1: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [] } },
-            p2: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [] } },
-            currentPhase: 'sturm',
+            p1: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
+            p2: { budget: 25, squad: { abwehr: [], mittelfeld: [], sturm: [], torwart: [] } },
             selectedPlayerPhoto: null,
             isCustomMode: false
         };
 
+        // Datenbank kategorisiert nach Positionen für exakte Filterung
         const playerDatabase = [
-            { name: "Kylian Mbappé", club: "Real Madrid", pos: "ST", photo: "https://cdn.sofifa.net/players/231/747/24_120.png" },
-            { name: "Erling Haaland", club: "Man City", pos: "ST", photo: "https://cdn.sofifa.net/players/239/085/24_120.png" },
-            { name: "Jamal Musiala", club: "FC Bayern", pos: "CAM", photo: "https://cdn.sofifa.net/players/256/630/24_120.png" },
-            { name: "Jude Bellingham", club: "Real Madrid", pos: "CAM", photo: "https://cdn.sofifa.net/players/252/371/24_120.png" },
-            { name: "Florian Wirtz", club: "Bayer 04", pos: "CAM", photo: "https://cdn.sofifa.net/players/256/634/24_120.png" },
-            { name: "Harry Kane", club: "FC Bayern", pos: "ST", photo: "https://cdn.sofifa.net/players/202/126/24_120.png" },
-            { name: "Vinícius Júnior", club: "Real Madrid", pos: "LW", photo: "https://cdn.sofifa.net/players/238/794/24_120.png" },
-            { name: "Mohamed Salah", club: "Liverpool", pos: "RW", photo: "https://cdn.sofifa.net/players/209/331/24_120.png" },
-            { name: "Kevin De Bruyne", club: "Man City", pos: "CM", photo: "https://cdn.sofifa.net/players/192/985/24_120.png" },
-            { name: "Rodri", club: "Man City", pos: "CDM", photo: "https://cdn.sofifa.net/players/231/866/24_120.png" },
-            { name: "Virgil van Dijk", club: "Liverpool", pos: "CB", photo: "https://cdn.sofifa.net/players/203/376/24_120.png" },
-            { name: "Antonio Rüdiger", club: "Real Madrid", pos: "CB", photo: "https://cdn.sofifa.net/players/205/452/24_120.png" },
-            { name: "William Saliba", club: "Arsenal", pos: "CB", photo: "https://cdn.sofifa.net/players/243/715/24_120.png" },
-            { name: "Alphonso Davies", club: "FC Bayern", pos: "LB", photo: "https://cdn.sofifa.net/players/234/396/24_120.png" },
-            { name: "Jeremie Frimpong", club: "Bayer 04", pos: "RB", photo: "https://cdn.sofifa.net/players/251/809/24_120.png" },
-            { name: "Cristiano Ronaldo", club: "Al Nassr", pos: "ST", photo: "https://cdn.sofifa.net/players/020/801/24_120.png" },
-            { name: "Lionel Messi", club: "Inter Miami", pos: "RW", photo: "https://cdn.sofifa.net/players/158/023/24_120.png" },
-            { name: "Neymar Jr", club: "Al Hilal", pos: "LW", photo: "https://cdn.sofifa.net/players/190/871/24_120.png" },
-            { name: "Lamine Yamal", club: "FC Barcelona", pos: "RW", photo: "https://cdn.sofifa.net/players/277/827/24_120.png" },
-            { name: "Pedri", club: "FC Barcelona", pos: "CM", photo: "https://cdn.sofifa.net/players/251/854/24_120.png" }
+            // STURM
+            { name: "Kylian Mbappé", club: "Real Madrid", pos: "ST", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/231747.png" },
+            { name: "Erling Haaland", club: "Man City", pos: "ST", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/239085.png" },
+            { name: "Vinícius Júnior", club: "Real Madrid", pos: "LW", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/238794.png" },
+            { name: "Mohamed Salah", club: "Liverpool", pos: "RW", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/209331.png" },
+            { name: "Harry Kane", club: "FC Bayern", pos: "ST", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/202126.png" },
+            { name: "Lamine Yamal", club: "FC Barcelona", pos: "RW", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/277827.png" },
+            { name: "Neymar Jr", club: "Al Hilal", pos: "LW", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/190871.png" },
+            { name: "Cristiano Ronaldo", club: "Al Nassr", pos: "ST", category: "sturm", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/20801.png" },
+
+            // MITTELFELD
+            { name: "Jamal Musiala", club: "FC Bayern", pos: "CAM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/256630.png" },
+            { name: "Jude Bellingham", club: "Real Madrid", pos: "CAM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/252371.png" },
+            { name: "Florian Wirtz", club: "Bayer 04", pos: "CAM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/256634.png" },
+            { name: "Kevin De Bruyne", club: "Man City", pos: "CM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/192985.png" },
+            { name: "Rodri", club: "Man City", pos: "CDM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/231866.png" },
+            { name: "Pedri", club: "FC Barcelona", pos: "CM", category: "mittelfeld", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/251854.png" },
+
+            // ABWEHR
+            { name: "Virgil van Dijk", club: "Liverpool", pos: "CB", category: "abwehr", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/203376.png" },
+            { name: "Antonio Rüdiger", club: "Real Madrid", pos: "CB", category: "abwehr", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/205452.png" },
+            { name: "William Saliba", club: "Arsenal", pos: "CB", category: "abwehr", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/243715.png" },
+            { name: "Alphonso Davies", club: "FC Bayern", pos: "LB", category: "abwehr", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/234396.png" },
+            { name: "Jeremie Frimpong", club: "Bayer 04", pos: "RB", category: "abwehr", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/251809.png" },
+
+            // TORWART
+            { name: "Manuel Neuer", club: "FC Bayern", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/167495.png" },
+            { name: "Thibaut Courtois", club: "Real Madrid", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/192119.png" },
+            { name: "Marc-André ter Stegen", club: "FC Barcelona", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/192448.png" },
+            { name: "Alisson Becker", club: "Liverpool", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/212831.png" },
+            { name: "Gianluigi Donnarumma", club: "PSG", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/230621.png" },
+            { name: "Ederson", club: "Man City", pos: "TW", category: "torwart", photo: "https://raw.githubusercontent.com/futhead/futhead-data/master/img/24/players/210257.png" }
         ];
+
+        function getCurrentPhase() {
+            return DRAFT_SEQUENCE[Math.min(currentStepIndex, DRAFT_SEQUENCE.length - 1)];
+        }
 
         function toggleCustomMode() {
             state.isCustomMode = !state.isCustomMode;
@@ -664,16 +715,21 @@
         function onSearchInput(val) {
             const resultsDiv = document.getElementById('searchResults');
             const query = val.toLowerCase().trim();
+            const currentPhase = getCurrentPhase();
 
             if (!query) {
                 resultsDiv.style.display = 'none';
                 return;
             }
 
-            const matches = playerDatabase.filter(p => p.name.toLowerCase().includes(query) || p.club.toLowerCase().includes(query));
+            // FILTER: Zeige NUR Spieler der AKTUELLEN Position
+            const matches = playerDatabase.filter(p => 
+                p.category === currentPhase && 
+                (p.name.toLowerCase().includes(query) || p.club.toLowerCase().includes(query))
+            );
 
             if (matches.length === 0) {
-                resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">Kein Spieler gefunden. Nutze "Custom Spieler".</div>`;
+                resultsDiv.innerHTML = `<div class="search-item" style="color: #94a3b8;">Kein ${currentPhase.toUpperCase()}-Spieler gefunden. Nutze "Custom Spieler".</div>`;
             } else {
                 resultsDiv.innerHTML = matches.map(p => `
                     <div class="search-item" onclick="selectSearchPlayer('${p.name.replace(/'/g, "\\'")}', '${p.photo}')">
@@ -701,24 +757,23 @@
             }
         });
 
-        function updateAutoPhase() {
-            const p1 = state.p1.squad;
-            const p2 = state.p2.squad;
+        function updateUIPhase() {
+            const currentPhase = getCurrentPhase();
 
-            if (p1.sturm.length < limits.sturm || p2.sturm.length < limits.sturm) {
-                state.currentPhase = 'sturm';
-            } else if (p1.mittelfeld.length < limits.mittelfeld || p2.mittelfeld.length < limits.mittelfeld) {
-                state.currentPhase = 'mittelfeld';
-            } else if (p1.abwehr.length < limits.abwehr || p2.abwehr.length < limits.abwehr) {
-                state.currentPhase = 'abwehr';
-            }
+            // Sequence Bar update
+            const totalSteps = DRAFT_SEQUENCE.length;
+            const stepNum = Math.min(currentStepIndex + 1, totalSteps);
+            document.getElementById('sequenceBadge').innerText = `Runde ${stepNum}/${totalSteps}: ${currentPhase.toUpperCase()}`;
 
+            // Filter Hinweis update
+            document.getElementById('filterHint').innerText = `🔍 Filter aktiv: Nur ${currentPhase.toUpperCase()}-Spieler`;
+
+            // Position Grid Button Highlight
             document.querySelectorAll('.pos-btn').forEach(btn => {
-                const isCurrent = btn.dataset.pos === state.currentPhase;
-                btn.classList.toggle('active', isCurrent);
+                const pos = btn.id.replace('pos-', '');
+                btn.classList.toggle('active', pos === currentPhase);
             });
 
-            document.getElementById('sequenceBadge').innerText = `${state.currentPhase.toUpperCase()}`;
             updateButtonsState();
         }
 
@@ -746,7 +801,7 @@
 
             const priceInput = document.getElementById('playerPrice');
             const price = parseInt(priceInput.value);
-            const pos = state.currentPhase;
+            const pos = getCurrentPhase();
 
             if (!name) {
                 showToast("⚠️ Bitte gib einen Spielernamen ein!");
@@ -766,7 +821,7 @@
             }
 
             if (playerState.squad[pos].length >= limits[pos]) {
-                showToast(`⚠️ Spieler ${playerNum} hat die Position (${pos.toUpperCase()}) bereits voll!`);
+                showToast(`⚠️ Spieler ${playerNum} hat für ${pos.toUpperCase()} keinen freien Platz mehr!`);
                 return;
             }
 
@@ -776,53 +831,52 @@
             const slotIndex = playerState.squad[pos].length;
             const slotEl = document.getElementById(`p${playerNum}-${pos}-${slotIndex}`);
             
-            slotEl.classList.add('filled');
-            slotEl.innerHTML = `
-                <div class="player-card">
-                    <span class="pos-tag">${pos.toUpperCase()}</span>
-                    <img class="player-face" src="${photo}" alt="${name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
-                    <span class="name" title="${name}">${name}</span>
-                    <span class="price">${price} €</span>
-                </div>
-            `;
+            if (slotEl) {
+                slotEl.classList.add('filled');
+                slotEl.innerHTML = `
+                    <div class="player-card">
+                        <span class="pos-tag">${pos.toUpperCase()}</span>
+                        <img class="player-face" src="${photo}" alt="${name}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}'">
+                        <span class="name" title="${name}">${name}</span>
+                        <span class="price">${price} €</span>
+                    </div>
+                `;
+            }
 
             document.getElementById(`p${playerNum}Budget`).innerText = `${playerState.budget} €`;
 
+            // Reset Inputs
             document.getElementById('playerName').value = '';
             document.getElementById('customPlayerName').value = '';
             document.getElementById('customPlayerImg').value = '';
             priceInput.value = '';
             state.selectedPlayerPhoto = null;
 
-            updateAutoPhase();
-            checkCompletion();
+            // Nächster Schritt in der festen Sequenz
+            currentStepIndex++;
+
+            if (currentStepIndex >= DRAFT_SEQUENCE.length) {
+                checkCompletion(true);
+            } else {
+                updateUIPhase();
+            }
         }
 
         function updateButtonsState() {
-            const pos = state.currentPhase;
+            const pos = getCurrentPhase();
 
             const p1Full = state.p1.squad[pos].length >= limits[pos];
             const p2Full = state.p2.squad[pos].length >= limits[pos];
 
             document.getElementById('btnAssignP1').disabled = p1Full;
             document.getElementById('btnAssignP2').disabled = p2Full;
-
-            if (p1Full && !p2Full) {
-                showToast(`💡 Hinweis: Spieler 1 ist bei ${pos.toUpperCase()} voll. Spieler MUSS an Spieler 2 gehen!`);
-            } else if (p2Full && !p1Full) {
-                showToast(`💡 Hinweis: Spieler 2 ist bei ${pos.toUpperCase()} voll. Spieler MUSS an Spieler 1 gehen!`);
-            }
         }
 
-        function countTotal(squad) {
-            return squad.abwehr.length + squad.mittelfeld.length + squad.sturm.length;
-        }
-
-        function checkCompletion() {
-            if (countTotal(state.p1.squad) === 5 && countTotal(state.p2.squad) === 5) {
+        function checkCompletion(isFinished = false) {
+            if (isFinished || currentStepIndex >= DRAFT_SEQUENCE.length) {
                 const modal = document.getElementById('winnerModal');
                 const text = document.getElementById('winnerText');
-                text.innerHTML = `Beide Teams haben ihre 5 Spieler aufgestellt!<br><br>` +
+                text.innerHTML = `Alle 12 Picks wurden vergeben!<br><br>` +
                     `🟢 Spieler 1 Restbudget: <b>${state.p1.budget} €</b><br>` +
                     `🔵 Spieler 2 Restbudget: <b>${state.p2.budget} €</b>`;
                 modal.style.display = 'flex';
@@ -833,7 +887,7 @@
             location.reload();
         }
 
-        updateAutoPhase();
+        updateUIPhase();
     </script>
 </body>
 </html>
